@@ -31,7 +31,7 @@ public class ProductServlet extends HttpServlet {
     private void listProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Product> products = Java_JDBC.getAllProducts(); // Assuming this method exists
         request.setAttribute("products", products);
-        request.getRequestDispatcher("/productCtl.jsp").forward(request, response);
+        request.getRequestDispatcher("/homepage.jsp").forward(request, response);
     }
 
     private void viewProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,7 +45,7 @@ public class ProductServlet extends HttpServlet {
         String query = request.getParameter("query");
         List<Product> products = Java_JDBC.searchProducts(query); // Assuming this method exists
         request.setAttribute("products", products);
-        request.getRequestDispatcher("/productCtl.jsp").forward(request, response);
+        request.getRequestDispatcher("/homepage.jsp").forward(request, response);
     }
 
 

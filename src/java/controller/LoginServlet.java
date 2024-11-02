@@ -21,7 +21,7 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("username") != null) {
             // Nếu đã đăng nhập, điều hướng đến trang sách
-            response.sendRedirect("productCtl.jps");
+            response.sendRedirect("homepage.jsp");
         } else {
             // Nếu chưa đăng nhập, hiển thị trang login
             request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -53,7 +53,7 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect(response.encodeURL("product"));
             } else {
                 // Xử lý lỗi đăng nhập
-                request.setAttribute("errorMessage", "Invalid username or password.");
+                request.setAttribute("errorMessage", "Tài khoản hoặc mật khẩu không hợp lệ.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         } catch (Exception e) {

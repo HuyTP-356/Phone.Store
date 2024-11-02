@@ -12,11 +12,12 @@ public class Java_JDBC {
         String dbPassword = "123";
         String port = "1433";
         String IP = "127.0.0.1";
-        String ServerName = "DESKTOP-UKLNCAK";
+//        String ServerName = "DESKTOP-UKLNCAK";
+        String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
         String DBName = "PhoneStore";
         String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
-        String dbURL = "jdbc:sqlserver://" + ServerName + ":" + port + ";databaseName=" + DBName + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
+        String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
 
         try {
             Class.forName(driverClass);
@@ -53,8 +54,6 @@ public class Java_JDBC {
     }
 
     public static boolean validateUser(String username, String password) throws Exception {
-        boolean isValidUser = false;
-
         try (Connection con = getConnectionWithSqlJdbc()) {
             String query = "SELECT * FROM Users WHERE username = ? AND password_hash = ?";
             PreparedStatement stmt = con.prepareStatement(query);
@@ -62,14 +61,10 @@ public class Java_JDBC {
             stmt.setString(2, password); // Plain password check, no hashing
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                isValidUser = true;
-            }
+            return rs.next();
         } catch (Exception e) {
             throw new Exception("Error validating user", e);
         }
-
-        return isValidUser;
     }
 
     public static List<Product> getProductsByBrand(String brand) {

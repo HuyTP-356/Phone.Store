@@ -29,6 +29,6 @@
     </session-config>
     <!-- Set productList.jsp as the default welcome page -->
     <welcome-file-list>
-        <welcome-file>productCtl.jsp</welcome-file>
+        <welcome-file>homepage.jsp</welcome-file>
     </welcome-file-list>
 </web-app>
