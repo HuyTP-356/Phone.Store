@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<web-app version="3.1"
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
     <servlet>
         <servlet-name>NewServlet</servlet-name>
         <servlet-class>controller.NewServlet</servlet-class>
@@ -12,6 +14,10 @@
         <servlet-name>loginse</servlet-name>
         <servlet-class>controller.loginse</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Logut</servlet-name>
+        <servlet-class>controller.Logut</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
         <url-pattern>/NewServlet</url-pattern>
@@ -23,6 +29,10 @@
     <servlet-mapping>
         <servlet-name>loginse</servlet-name>
         <url-pattern>/loginse</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Logut</servlet-name>
+        <url-pattern>/Logut</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

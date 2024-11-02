@@ -8,10 +8,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpSession;
 import model.Java_JDBC;
-
+import model.User; // Import User class
 import java.io.IOException;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+@WebServlet(name = "LoginServlet", urlPatterns = { "/LoginServlet" })
 public class LoginServlet extends HttpServlet {
 
     @Override
