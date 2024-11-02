@@ -2,7 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
         <!-- =======
         <group>
             <file>file:/D:/PRJ301-Phone/web/productList.jsp</file>
@@ -12,5 +11,11 @@
             <file>file:/D:/PRJ301-Phone/src/java/model/Product.java</file>
         </group>
 >>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e -->
+        <group>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/nbproject/build-impl.xml</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Java_JDBC.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/META-INF/context.xml</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/ProductServlet.java</file>
+        </group>
     </open-files>
 </project-private>

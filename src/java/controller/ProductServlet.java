@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import model.Java_JDBC;
 import model.Product;
@@ -18,22 +20,26 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-
-        if (null == action) {
-            try {
-                listProducts(request, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else
-            switch (action) {
-                case "view" -> viewProduct(request, response);
-                case "search" -> searchProduct(request, response);
-                // } else if ("category".equals(action)) {
-                // getProductsByCategory(request, response);
-                default -> listProducts(request, response);
-            }
+        try {
+            String action = request.getParameter("action");
+            
+            if (null == action) {
+                try {
+                    listProducts(request, response);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else
+                switch (action) {
+                    case "view" -> viewProduct(request, response);
+                    case "search" -> searchProduct(request, response);
+                    // } else if ("category".equals(action)) {
+                    // getProductsByCategory(request, response);
+                    default -> listProducts(request, response);
+                }
+        } catch (Exception ex) {
+            Logger.getLogger(ProductServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void listProducts(HttpServletRequest request, HttpServletResponse response)

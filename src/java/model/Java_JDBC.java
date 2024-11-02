@@ -63,7 +63,7 @@ public class Java_JDBC {
         return productList;
     }
 
-    public static User validateUser(String username, String password) throws Exception {
+    public static boolean validateUser(String username, String password) throws Exception {
         User user = null;
 
         try (Connection con = getConnectionWithSqlJdbc()) {
@@ -73,23 +73,10 @@ public class Java_JDBC {
             stmt.setString(2, password); // Plain password check for now
 
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                // Construct a new User object with retrieved data
-                user = new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("email"),
-                        rs.getString("password_hash"),
-                        rs.getString("full_name"),
-                        rs.getInt("role_id"),
-                        rs.getString("phoneNumber"),
-                        rs.getTimestamp("created_at").toLocalDateTime());
-            }
+            return rs.next();
         } catch (Exception e) {
             throw new Exception("Error validating user", e);
         }
-
-        return user;
     }
 
     public static void insertProduct(Product product) throws Exception {
@@ -112,5 +99,12 @@ public class Java_JDBC {
         }
     }
 
-    >>>>>>>3f e63b37239b05c73ff57305f90f62e1ef5b549e
+    public static Product getProductById(int productId) {
+        return new Product();
+    }
+
+    public static List<Product> searchProducts(String query) {
+        return new ArrayList<>();
+    }
+
 }

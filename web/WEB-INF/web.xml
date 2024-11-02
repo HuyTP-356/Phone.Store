@@ -12,13 +12,10 @@
         <servlet-name>loginse</servlet-name>
         <servlet-class>controller.loginse</servlet-class>
     </servlet>
-<<<<<<< HEAD
-=======
     <servlet>
         <servlet-name>Logut</servlet-name>
         <servlet-class>controller.Logut</servlet-class>
     </servlet>
->>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
         <url-pattern>/NewServlet</url-pattern>
@@ -31,22 +28,14 @@
         <servlet-name>loginse</servlet-name>
         <url-pattern>/loginse</url-pattern>
     </servlet-mapping>
-<<<<<<< HEAD
-=======
     <servlet-mapping>
         <servlet-name>Logut</servlet-name>
         <url-pattern>/Logut</url-pattern>
     </servlet-mapping>
->>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    <!-- Set productList.jsp as the default welcome page -->
     <welcome-file-list>
-<<<<<<< HEAD
         <welcome-file>homepage.jsp</welcome-file>
-=======
-        <welcome-file>productCtl.jsp</welcome-file>
->>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e
     </welcome-file-list>
 </web-app>

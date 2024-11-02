@@ -21,7 +21,7 @@
     </div> -->
             <div class="container px-0">
                 <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                    <a href="/" class="navbar-brand">
+                    <a href="${pageContext.request.contextPath}" class="navbar-brand">
                         <h1 class="text-primary display-6">Smartphone Shop</h1>
                     </a>
                     <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
@@ -45,7 +45,7 @@
                             <!-- <a href="contact.html" class="nav-item nav-link">Contact</a> -->
                         </div>
                         <div class="d-flex m-3 me-0">
-                            <c:if test="${not empty pageContext.request.userPrincipal}">
+                            <c:if test="${not empty sessionScope.username}">
                                 <a href="#" class="position-relative me-4 my-auto">
                                     <i class="fa fa-shopping-bag fa-2x"></i>
                                     <span
@@ -64,7 +64,7 @@
                                             <!-- <img style="width: 150px; height: 150px; border-radius: 50%; overflow: hidden;"
                                                 src="/images/avatar/${sessionScope.avatar}" /> -->
                                             <div class="text-center my-3">
-                                                <c:out value="${sessionScope.fullName}" />
+                                                <c:out value="${sessionScope.username}" />
                                             </div>
                                         </li>
 
@@ -75,14 +75,14 @@
                                             <hr class="dropdown-divider">
                                         </li>
                                         <li>
-                                            <form method="post" action="/logout">
+                                            <form method="get" action="LogoutServlet">
                                                 <button class="dropdown-item">Đăng xuất</button>
                                             </form>
                                         </li>
                                     </ul>
                                 </div>
                             </c:if>
-                            <c:if test="${empty pageContext.request.userPrincipal}">
+                            <c:if test="${empty sessionScope.username}">
                                 <a href="login.jsp" class="position-relative me-4 my-auto">
                                     Đăng nhập
                                 </a>

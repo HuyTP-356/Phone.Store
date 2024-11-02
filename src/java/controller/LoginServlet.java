@@ -11,7 +11,7 @@ import model.Java_JDBC;
 import model.User; // Import User class
 import java.io.IOException;
 
-@WebServlet(name = "LoginServlet", urlPatterns = { "/LoginServlet" })
+@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
 
     @Override
@@ -50,7 +50,7 @@ public class LoginServlet extends HttpServlet {
                 }
 
                 // Điều hướng người dùng đến trang danh sách sách
-                response.sendRedirect(response.encodeURL("product"));
+                request.getRequestDispatcher("/homepage.jsp").forward(request, response);
             } else {
                 // Xử lý lỗi đăng nhập
                 request.setAttribute("errorMessage", "Tài khoản hoặc mật khẩu không hợp lệ.");
