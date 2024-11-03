@@ -12,7 +12,6 @@
 
 <!DOCTYPE html>
 <html lang="vi">
-
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -83,20 +82,17 @@
             }
         </style>
     </head>
-
     <body>
         <div class="login-container">
             <h3 class="login-header">Đăng nhập</h3>
             <form action="AuthServlet" method="post">
                 <div class="form-group">
                     <label for="username">Tên người dùng</label>
-                    <input type="text" class="form-control" id="username" name="username"
-                           placeholder="Nhập tên người dùng" required>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên người dùng" required>
                 </div>
                 <div class="form-group">
                     <label for="password">Mật khẩu</label>
-                    <input type="password" class="form-control" id="password" name="password"
-                           placeholder="Nhập mật khẩu" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
                 </div>
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
@@ -108,7 +104,7 @@
                 <div class="text-danger mt-3">${errorMessage}</div>
             </c:if>
             <div class="text-center mt-4">
-                <a href="register.jsp">Chưa có tài khoản? Đăng ký ngay!</a>
+                <a href="user?action=addUser">Chưa có tài khoản? Đăng ký ngay!</a>
             </div>
             <div class="text-center mt-3">
                 <a href="HomePage" class="btn btn-secondary btn-block text-white">Quay lại Trang Chủ</a>
@@ -118,5 +114,4 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-
 </html>

@@ -13,17 +13,26 @@ public class User {
     private Role role;
     private String phoneNumber;
     private Date createdAt;
+    private String address;
 
     // Constructor
-    public User(int userId, String username, String email, String passwordHash, String fullName,
-            String phoneNumber) {
-        this.userId = userId;
+    public User(String username, String email, String passwordHash, String fullName, String phoneNumber, String address) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
-        this.createdAt = Date.from(Instant.now());
+        this.createdAt = Date.from(Instant.now()); // Đặt thời gian tạo mặc định
+        this.address = address;
+    }
+
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPhoneNumber() {

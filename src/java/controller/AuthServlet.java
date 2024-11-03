@@ -6,8 +6,10 @@ import jakarta.servlet.http.*;
 import model.Java_JDBC;
 import model.User;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Product;
 
 @WebServlet(name = "AuthServlet", urlPatterns = {"/AuthServlet"})
 public class AuthServlet extends HttpServlet {
@@ -16,7 +18,7 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        
+
         if (action != null) {
             switch (action) {
                 case "login":
@@ -57,14 +59,15 @@ public class AuthServlet extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        HttpSession session = request.getSession();            
+        HttpSession session = request.getSession();
 
         try {
             if (Java_JDBC.validateUser(username, password)) {
                 User user = Java_JDBC.getUserByUserName(username);
-                session.setAttribute("role", user.getRole().getName()); 
+                session.setAttribute("role", user.getRole().getName());
                 session.setAttribute("username", username);
-
+                List<Product> products = Java_JDBC.getFirst16Products();
+                request.setAttribute("products", products);
                 if ("User".equals(user.getRole().getName())) {
                     ResourcesHandler.forwardToClientPage(request, response, "/homepage");
                 } else {
