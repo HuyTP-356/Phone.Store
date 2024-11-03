@@ -83,7 +83,7 @@
                                 </div>
                             </c:if>
                             <c:if test="${empty sessionScope.username}">
-                                <a href="login.jsp" class="position-relative me-4 my-auto">
+                                <a href="LoginServlet" class="position-relative me-4 my-auto">
                                     Đăng nhập
                                 </a>
                             </c:if>

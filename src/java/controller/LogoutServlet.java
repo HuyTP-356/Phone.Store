@@ -33,6 +33,6 @@ public class LogoutServlet extends HttpServlet {
             }
         }
         // Điều hướng về trang login.jsp
-        response.sendRedirect("homepage.jsp");
+        ResourcesHandler.forwardToClientPage(request, response, "/homepage");
     }
 }

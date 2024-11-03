@@ -12,10 +12,20 @@
         </group>
 >>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e -->
         <group>
-            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/nbproject/build-impl.xml</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/layout/header.jsp</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/login.jsp</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/HomePage.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/homepage.jsp</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/LogoutServlet.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/register.jsp</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/web.xml</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/ResourcesHandler.java</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Java_JDBC.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/productList.jsp</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/META-INF/context.xml</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/ProductServlet.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/LoginServlet.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/productCtl.jsp</file>
         </group>
     </open-files>
 </project-private>

@@ -54,7 +54,6 @@
                     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
                     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
                     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-                    >>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e
                 </body>
 
                 </html>
