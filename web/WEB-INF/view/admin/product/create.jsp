@@ -42,14 +42,14 @@
                                             <input type="text"
                                                 class="form-control ${not empty errorName ? 'is-invalid' : ''}"
                                                 name="name" />
-                                            ${errorName}
+                                            <span class="text-danger">${errorName}</span>
                                         </div>
                                         <div class="col-12 col-md-6 mb-3">
                                             <label class="form-label">Price:</label>
                                             <input type="text"
                                                 class="form-control ${not empty errorPrice ? 'is-invalid' : ''}"
                                                 name="price" aria-placeholder="0.0" />
-                                            ${errorPrice}
+                                            <span class="text-danger">${errorPrice}</span>
                                         </div>
 
                                         <div class="col-12 col-md-6 mb-3">
@@ -57,14 +57,14 @@
                                             <input type="text"
                                                 class="form-control ${not empty errorQuantity ? 'is-invalid' : ''}"
                                                 name="quantity" />
-                                            ${errorQuantity}
+                                            <span class="text-danger">${errorQuantity}</span>
                                         </div>
                                         <div class="col-12 mb-3">
                                             <label class="form-label">Detail description:</label>
                                             <textarea type="text"
                                                 class="form-control ${not empty errorDetailDesc ? 'is-invalid' : ''}"
                                                 name="detailDesc"></textarea>
-                                            ${errorDetailDesc}
+                                            <span class="text-danger">${errorDetailDesc}</span>
                                         </div>
                                         <div class="col-12 col-md-6 mb-4">
                                             <label for="Role" class="form-label">Factory:</label>
@@ -72,15 +72,17 @@
                                                 <option value="APPLE">Apple</option>
                                                 <option value="SAMSUNG">Samsung</option>
                                                 <option value="OPPO">OPPO</option>
-                                                <option value="HUAWEI">Huawei</option>
+                                                <option value="VIVO">Vivo</option>
+                                                <option value="TECNO">Tecno</option>
                                                 <option value="XIAOMI">Xiaomi</option>
+                                                <option value="REALME">Realme</option>
                                             </select>
                                         </div>
                                         <div class="col-12 col-md-6 mb-3">
                                             <label for="avatarFile" class="form-label">URL Image:</label>
                                             <input class="form-control ${not empty errorImageUrl ? 'is-invalid' : ''}"
                                                 type="text" id="avatarFile" name="productImageURL" />
-                                            ${errorImageUrl}
+                                            <span class="text-danger">${errorImageUrl}</span>
                                         </div>
 
                                         <div class="col-12 mb-3">

@@ -49,17 +49,16 @@ public class Java_JDBC {
 
             while (resultSet.next()) {
                 Product product = new Product();
-                product.setId(resultSet.getInt("product_id")); // Assuming the column name is product_id
-                product.setName(resultSet.getString("product_name")); // Assuming the column name is product_name
+                product.setId(resultSet.getInt("product_id"));
+                product.setName(resultSet.getString("product_name"));
                 product.setBrand(resultSet.getString("brand"));
                 product.setPrice(resultSet.getDouble("price"));
                 product.setDescription(resultSet.getString("description"));
-                product.setImageUrl(resultSet.getString("image_url")); // Assuming the column name is image_url
-                product.setStockQuantity(resultSet.getInt("stock_quantity")); // Assuming the column name is
-                // stock_quantity
+                product.setImageUrl(resultSet.getString("image_url"));
+                product.setStockQuantity(resultSet.getInt("stock_quantity"));
                 productList.add(product);
             }
-            System.out.println("Number of products retrieved: " + productList.size()); // Debug statement
+            System.out.println("Number of products retrieved: " + productList.size());
         } catch (SQLException e) {
             e.getErrorCode();
         }
@@ -72,21 +71,21 @@ public class Java_JDBC {
         String query = "SELECT name, description FROM Role WHERE role_id = ?";
 
         try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, roleId); // Set the roleId parameter
+            stmt.setInt(1, roleId);
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String roleName = rs.getString("name"); // Thay đổi từ "role_name" thành "name"
+                String roleName = rs.getString("name");
                 String description = rs.getString("description");
 
-                role = new Role(roleName, description); // Giả sử bạn đã cập nhật constructor cho Role
+                role = new Role(roleName, description);
             }
         } catch (SQLException e) {
             throw new Exception("Error retrieving role", e);
         }
 
-        return role; // Trả về đối tượng Role hoặc null nếu không tìm thấy
+        return role;
     }
 
     public static User getUserByUserName(String username) throws Exception {
@@ -99,7 +98,6 @@ public class Java_JDBC {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Lấy thông tin từ ResultSet và tạo đối tượng User
                 int userId = rs.getInt("user_id");
                 String email = rs.getString("email");
                 String passwordHash = rs.getString("password_hash");
@@ -124,7 +122,7 @@ public class Java_JDBC {
             String query = "SELECT * FROM Users WHERE username = ? AND password_hash = ?";
             PreparedStatement stmt = con.prepareStatement(query);
             stmt.setString(1, username);
-            stmt.setString(2, password); // Plain password check for now
+            stmt.setString(2, password);
 
             ResultSet rs = stmt.executeQuery();
             return rs.next();
@@ -158,26 +156,105 @@ public class Java_JDBC {
         String query = "SELECT * FROM Products WHERE product_id = ?";
 
         try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement stmt = con.prepareStatement(query)) {
-            stmt.setInt(1, productId); // Set the product ID parameter
+            stmt.setInt(1, productId);
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                // Retrieve values from ResultSet and set them in a Product object
                 product = new Product();
-                product.setId(rs.getInt("product_id")); // Assuming column name is product_id
-                product.setName(rs.getString("product_name")); // Assuming column name is product_name
+                product.setId(rs.getInt("product_id"));
+                product.setName(rs.getString("product_name"));
                 product.setBrand(rs.getString("brand"));
                 product.setPrice(rs.getDouble("price"));
                 product.setDescription(rs.getString("description"));
-                product.setImageUrl(rs.getString("image_url")); // Assuming column name is image_url
-                product.setStockQuantity(rs.getInt("stock_quantity")); // Assuming column name is stock_quantity
+                product.setImageUrl(rs.getString("image_url"));
+                product.setStockQuantity(rs.getInt("stock_quantity"));
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving product by ID: " + e.getMessage());
         }
 
-        return product; // Return the product object or null if not found
+        return product;
+    }
+
+    public static boolean updateProduct(Product updatedProduct) {
+        String sql = "UPDATE Products SET product_name = ?, brand = ?, price = ?, description = ?, image_url = ?, stock_quantity = ? WHERE product_id = ?";
+
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, updatedProduct.getName());
+            pstmt.setString(2, updatedProduct.getBrand());
+            pstmt.setDouble(3, updatedProduct.getPrice());
+            pstmt.setString(4, updatedProduct.getDescription());
+            pstmt.setString(5, updatedProduct.getImageUrl());
+            pstmt.setInt(6, updatedProduct.getStockQuantity());
+            pstmt.setInt(7, updatedProduct.getId());
+
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean deleteProductById(int productId) {
+        String sql = "DELETE FROM Products WHERE product_id = ?";
+
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, productId);
+
+            int rowsDeleted = pstmt.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static List<Product> getProductsByPage(int offset, int recordsPerPage) {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM Products ORDER BY product_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY;";
+
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, offset);
+            pstmt.setInt(2, recordsPerPage);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Product product = new Product();
+                    product.setId(rs.getInt("product_id"));
+                    product.setName(rs.getString("product_name"));
+                    product.setBrand(rs.getString("brand"));
+                    product.setPrice(rs.getDouble("price"));
+                    product.setImageUrl(rs.getString("image_url"));
+                    product.setDescription(rs.getString("description"));
+                    product.setStockQuantity(rs.getInt("stock_quantity"));
+                    products.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
+    public static int getProductCount() {
+        String sql = "SELECT COUNT(*) FROM Products";
+        int count = 0;
+
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
     }
 
     public static List<Product> searchProducts(String query) {

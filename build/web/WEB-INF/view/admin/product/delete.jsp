@@ -33,20 +33,19 @@
                                 <div class="mt-5">
                                     <div class="row">
                                         <div class="col-md-6 col-12 mx-auto">
-                                            <h1>Delete product ${id}</h1>
+                                            <h1>Delete product ${product.id}</h1>
                                             <hr>
                                             <div class="alert alert-danger mb-3" role="alert">
                                                 Are you sure you want to delete this product?
                                             </div>
-                                            <form method="post" action="/admin/product/delete"
-                                                modelAttribute="newProduct">
+                                            <form method="post" action="AdminServlet?action=handleDeleteProduct&id=${product.id}">
                                                 <div style="display: none;">
                                                     <label class="form-label">Id: </label>
                                                     <input type="text" class="form-control" path="id"
-                                                        value="${id}" />
+                                                        value="${product.id}" />
                                                 </div>
                                                 <button type="submit" class="btn btn-danger mt-1">Confirm</button>
-                                            <form>
+                                            </form>
                                         </div>
 
 

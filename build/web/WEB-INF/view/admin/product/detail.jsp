@@ -52,7 +52,7 @@
                                             <li class="list-group-item">Name: ${product.name}</li>
                                             <li class="list-group-item">Description: ${product.description}</li>
                                             <li class="list-group-item">Price: <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="VND"/></li>
-                                            <li class="list-group-item">Description: ${product.stockQuantity}</li>
+                                            <li class="list-group-item">Quantity: ${product.stockQuantity}</li>
                                         </ul>
                                     </div>
                                     <a href="AdminServlet?action=viewAllProducts" class="btn btn-success mt-3">Back</a>

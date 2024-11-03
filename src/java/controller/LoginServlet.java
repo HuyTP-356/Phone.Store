@@ -20,10 +20,8 @@ public class LoginServlet extends HttpServlet {
         // Kiểm tra xem người dùng đã đăng nhập chưa
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("username") != null) {
-            // Nếu đã đăng nhập, điều hướng đến trang sách
             ResourcesHandler.forwardToClientPage(request, response, "/homepage");
         } else {
-            // Nếu chưa đăng nhập, hiển thị trang login
             ResourcesHandler.forwardToClientPage(request, response, "/login");
         }
     }

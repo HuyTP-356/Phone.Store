@@ -7,9 +7,19 @@ public class Product {
     private double price;
     private String description;
     private String imageUrl;
-    private int stockQuantity; // New field
+    private int stockQuantity; 
     // Constructor
 
+    public Product(String name, String brand, double price, String description, String imageUrl,
+            int stockQuantity) {
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.stockQuantity = stockQuantity;
+    }
+    
     public Product(int id, String name, String brand, double price, String description, String imageUrl,
             int stockQuantity) {
         this.id = id;
@@ -18,7 +28,7 @@ public class Product {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
-        this.stockQuantity = stockQuantity; // Initialize new field
+        this.stockQuantity = stockQuantity;
     }
 
     // Default constructor (optional, if needed)

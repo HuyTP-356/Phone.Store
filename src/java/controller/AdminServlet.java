@@ -71,8 +71,11 @@ public class AdminServlet extends HttpServlet {
                     viewDetailProduct(request, response);
                     break;
                 case "updateProduct":
-                    viewDetailProduct(request, response);
-                    break;  
+                    viewUpdateProductForm(request, response);
+                    break;
+                case "deleteProduct":
+                    viewDeleteProductForm(request, response);
+                    break;
                 case "dashboard":
                     ResourcesHandler.forwardToAdminPage(request, response, "/dashboard/show");
                     break;
@@ -82,26 +85,56 @@ public class AdminServlet extends HttpServlet {
                 case "createProduct":
                     ResourcesHandler.forwardToAdminPage(request, response, "/product/create");
                     break;
-                case "handleCreateProduct":
-                    break;
                 default:
                     break;
             }
         }
     }
-    
+
     private void viewAllProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Product> products = Java_JDBC.getAllProducts(); // Assuming this method exists
+        int recordsPerPage = 10;
+        int page = 1;
+
+        if (request.getParameter("page") != null) {
+            page = Integer.parseInt(request.getParameter("page"));
+        }
+
+        int offset = (page - 1) * recordsPerPage;
+
+        List<Product> products = Java_JDBC.getProductsByPage(offset, recordsPerPage);
+
+        int totalRecords = Java_JDBC.getProductCount();
+        int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
+
+        // Thiết lập các thuộc tính cho view
         request.setAttribute("products", products);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("url", request.getContextPath() + "/AdminServlet?action=viewAllProducts");
+
+        // Chuyển tiếp tới trang hiển thị danh sách sản phẩm
         request.getRequestDispatcher(ResourcesHandler.AdminPath() + "/product/show.jsp").forward(request, response);
     }
-    
+
     private void viewDetailProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String id = request.getParameter("id");
         Product product = Java_JDBC.getProductById(Integer.parseInt(id));
         request.setAttribute("product", product);
         request.getRequestDispatcher(ResourcesHandler.AdminPath() + "/product/detail.jsp").forward(request, response);
-        
+    }
+
+    private void viewUpdateProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id = request.getParameter("id");
+        Product product = Java_JDBC.getProductById(Integer.parseInt(id));
+        request.setAttribute("product", product);
+        request.getRequestDispatcher(ResourcesHandler.AdminPath() + "/product/updateProduct.jsp").forward(request, response);
+    }
+
+    private void viewDeleteProductForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String id = request.getParameter("id");
+        Product product = Java_JDBC.getProductById(Integer.parseInt(id));
+        request.setAttribute("product", product);
+        request.getRequestDispatcher(ResourcesHandler.AdminPath() + "/product/delete.jsp").forward(request, response);
     }
 
     private void handleCreateProduct(HttpServletRequest request, HttpServletResponse response)
@@ -112,9 +145,8 @@ public class AdminServlet extends HttpServlet {
         String detailDesc = request.getParameter("detailDesc");
         String quantityStr = request.getParameter("quantity");
         String brand = request.getParameter("factory");
-        String imageURL = request.getParameter("productImageFile");
+        String imageURL = request.getParameter("productImageURL");
 
-        // Khởi tạo biến để kiểm tra lỗi
         boolean hasError = false;
         String errorPrice = "";
         String errorName = "";
@@ -122,17 +154,16 @@ public class AdminServlet extends HttpServlet {
         String errorQuantity = "";
         String errorImageUrl = "";
 
-        // Kiểm tra tính hợp lệ của các thông tin
         if (name == null || name.trim().isEmpty()) {
             hasError = true;
             errorName = "Name cannot be empty. ";
         }
-        
+
         if (detailDesc == null || detailDesc.trim().isEmpty()) {
             hasError = true;
             errorDetailDesc = "Description cannot be empty. ";
         }
-        
+
         if (imageURL == null || imageURL.trim().isEmpty()) {
             hasError = true;
             errorImageUrl = "Image URL cannot be empty. ";
@@ -162,14 +193,11 @@ public class AdminServlet extends HttpServlet {
             errorQuantity += "Invalid quantity format. ";
         }
 
-        // Xử lý tệp hình ảnh nếu không có lỗi
         if (!hasError) {
-            // Tạo một sản phẩm mới
-            Product newProduct = new Product(1, name, brand, price, detailDesc, imageURL, quantity);
+            Product newProduct = new Product(name, brand, price, detailDesc, imageURL, quantity);
             Java_JDBC.insertProduct(newProduct);
 
-            // Chuyển hướng đến trang thành công
-            response.sendRedirect(request.getContextPath() + "/admin/product/show");
+            response.sendRedirect(request.getContextPath() + "/AdminServlet?action=viewAllProducts");
         } else {
             // Nếu có lỗi, set thông báo lỗi và quay lại trang tạo sản phẩm
             request.setAttribute("errorName", errorName);
@@ -179,6 +207,103 @@ public class AdminServlet extends HttpServlet {
             request.setAttribute("errorImageUrl", errorImageUrl);
 
             ResourcesHandler.forwardToAdminPage(request, response, "/product/create");
+        }
+    }
+
+    private void handleUpdateProduct(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String priceStr = request.getParameter("price");
+        String detailDesc = request.getParameter("detailDesc");
+        String quantityStr = request.getParameter("quantity");
+        String brand = request.getParameter("factory");
+        String imageURL = request.getParameter("productImageFile");
+
+        boolean hasError = false;
+        String errorPrice = "";
+        String errorName = "";
+        String errorDetailDesc = "";
+        String errorQuantity = "";
+        String errorImageUrl = "";
+
+        if (name == null || name.trim().isEmpty()) {
+            hasError = true;
+            errorName = "Name cannot be empty. ";
+        }
+
+        if (detailDesc == null || detailDesc.trim().isEmpty()) {
+            hasError = true;
+            errorDetailDesc = "Description cannot be empty. ";
+        }
+
+        if (imageURL == null || imageURL.trim().isEmpty()) {
+            hasError = true;
+            errorImageUrl = "Image URL cannot be empty. ";
+        }
+
+        double price = 0.0;
+        try {
+            price = Double.parseDouble(priceStr);
+            if (price < 0) {
+                hasError = true;
+                errorPrice += "Price must be a positive number. ";
+            }
+        } catch (NumberFormatException e) {
+            hasError = true;
+            errorPrice = "Invalid price format. ";
+        }
+
+        int quantity = 0;
+        try {
+            quantity = Integer.parseInt(quantityStr);
+            if (quantity < 0) {
+                hasError = true;
+                errorQuantity = "Quantity must be a positive number. ";
+            }
+        } catch (NumberFormatException e) {
+            hasError = true;
+            errorQuantity += "Invalid quantity format. ";
+        }
+
+        if (!hasError) {
+            Product updatedProduct = new Product(id, name, brand, price, detailDesc, imageURL, quantity);
+            Java_JDBC.updateProduct(updatedProduct);
+
+            response.sendRedirect(request.getContextPath() + "/AdminServlet?action=viewAllProducts");
+        } else {
+            request.setAttribute("errorName", errorName);
+            request.setAttribute("errorPrice", errorPrice);
+            request.setAttribute("errorDetailDesc", errorDetailDesc);
+            request.setAttribute("errorQuantity", errorQuantity);
+            request.setAttribute("errorImageUrl", errorImageUrl);
+
+            request.getRequestDispatcher(ResourcesHandler.AdminPath() + "/product/updateProduct.jsp").forward(request, response);
+        }
+    }
+
+    private void handleDeleteProduct(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idStr = request.getParameter("id");
+        boolean success = false;
+
+        if (idStr != null && !idStr.trim().isEmpty()) {
+            try {
+                int productId = Integer.parseInt(idStr);
+                success = Java_JDBC.deleteProductById(productId);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                request.setAttribute("error", "Invalid product ID format.");
+            }
+        } else {
+            request.setAttribute("error", "Product ID is required.");
+        }
+
+        if (success) {
+            response.sendRedirect(request.getContextPath() + "/AdminServlet?action=viewAllProducts");
+        } else {
+            request.setAttribute("error", "Failed to delete the product.");
+            request.getRequestDispatcher(ResourcesHandler.AdminPath() + "/product/show.jsp").forward(request, response);
         }
     }
 
@@ -193,7 +318,22 @@ public class AdminServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        if (null != action) {
+            switch (action) {
+                case "handleCreateProduct":
+                    handleCreateProduct(request, response);
+                    break;
+                case "handleUpdateProduct":
+                    handleUpdateProduct(request, response);
+                    break;
+                case "handleDeleteProduct":
+                    handleDeleteProduct(request, response);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     /**
@@ -205,7 +345,5 @@ public class AdminServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    
 
 }
