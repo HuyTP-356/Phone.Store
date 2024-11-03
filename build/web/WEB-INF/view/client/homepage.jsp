@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@taglib uri = "/WEB-INF/tlds/PaginationTag.tld" prefix="pg" %>
 
 
 <html lang="en">
@@ -88,7 +89,7 @@
                                                     <div
                                                         class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                         <h4 style="font-size: 15px;">
-                                                            <a href="/product/${product.id}">${product.name}</a>
+                                                            <a href="${pageContext.request.contextPath}/client?action=showProductInfor&id=${product.id}">${product.name}</a>
                                                         </h4>
                                                         <p style="font-size: 13px;">${product.description}</p>
                                                         <div class="d-flex flex-lg-wrap justify-content-center">
@@ -96,7 +97,7 @@
                                                                class="text-dark fw-bold mb-3">
                                                                 <fmt:formatNumber value="${product.price}" /> đ
                                                             </p>
-                                                            <form action="/add-product-to-cart/${product.id}"
+                                                            <form action="ClientServlet?action=addToCart&id=${product.id}"
                                                                   method="post">
                                                                 <button
                                                                     class="mx-auto btn border border-secondary rounded-pill px-3 text-primary">

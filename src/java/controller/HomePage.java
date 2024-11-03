@@ -50,7 +50,7 @@ public class HomePage extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Product> products = Java_JDBC.getAllProducts();
+        List<Product> products = Java_JDBC.getFirst16Products();
         request.setAttribute("products", products);
         request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/homepage.jsp").forward(request, response);
     }

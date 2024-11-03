@@ -257,6 +257,30 @@ public class Java_JDBC {
         return count;
     }
 
+    public static List<Product> getFirst16Products() {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT TOP 16 * FROM Products ORDER BY product_id";
+
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("product_id"));
+                product.setName(rs.getString("product_name"));
+                product.setBrand(rs.getString("brand"));
+                product.setPrice(rs.getDouble("price"));
+                product.setImageUrl(rs.getString("image_url"));
+                product.setDescription(rs.getString("description"));
+                product.setStockQuantity(rs.getInt("stock_quantity"));
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return products;
+    }
+
     public static List<Product> searchProducts(String query) {
         return new ArrayList<>();
     }
