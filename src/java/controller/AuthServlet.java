@@ -16,11 +16,18 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-
-        if ("logout".equals(action)) {
-            handleLogout(request, response);
-        } else {
-            checkLoginStatus(request, response);
+        
+        if (action != null) {
+            switch (action) {
+                case "login":
+                    checkLoginStatus(request, response);
+                    break;
+                case "logout":
+                    handleLogout(request, response);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -50,19 +57,13 @@ public class AuthServlet extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        boolean rememberMe = "on".equals(request.getParameter("rememberMe"));
+        HttpSession session = request.getSession();            
 
         try {
             if (Java_JDBC.validateUser(username, password)) {
                 User user = Java_JDBC.getUserByUserName(username);
-                HttpSession session = request.getSession();
+                session.setAttribute("role", user.getRole().getName()); 
                 session.setAttribute("username", username);
-
-                if (rememberMe) {
-                    Cookie cookie = new Cookie("username", username);
-                    cookie.setMaxAge(24 * 60 * 60); // 24 giờ
-                    response.addCookie(cookie);
-                }
 
                 if ("User".equals(user.getRole().getName())) {
                     ResourcesHandler.forwardToClientPage(request, response, "/homepage");

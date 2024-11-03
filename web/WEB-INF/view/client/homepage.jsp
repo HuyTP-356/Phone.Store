@@ -80,7 +80,7 @@
                                             <div class="col-md-6 col-lg-4 col-xl-3">
                                                 <div class="rounded position-relative fruite-item">
                                                     <div class="fruite-img">
-                                                        <img src="/images/product/${product.avatar}"
+                                                        <img src="${product.imageUrl}"
                                                              class="img-fluid w-100 rounded-top" alt="">
                                                     </div>
                                                     <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
@@ -90,12 +90,11 @@
                                                         <h4 style="font-size: 15px;">
                                                             <a href="/product/${product.id}">${product.name}</a>
                                                         </h4>
-                                                        <p style="font-size: 13px;">${product.shortDesc}</p>
+                                                        <p style="font-size: 13px;">${product.description}</p>
                                                         <div class="d-flex flex-lg-wrap justify-content-center">
                                                             <p style="font-size: 15px; text-align: center; width: 100%;"
                                                                class="text-dark fw-bold mb-3">
                                                                 <fmt:formatNumber value="${product.price}" /> đ
-                                                                <!-- <span>${product.price}</span> -->
                                                             </p>
                                                             <form action="/add-product-to-cart/${product.id}"
                                                                   method="post">

@@ -32,9 +32,7 @@
                             <hr class="dropdown-divider" />
                         </li>
                         <li>
-                            <form method="post" action="LogoutServlet">
-                                <button class="dropdown-item">Logout</button>
-                            </form>
+                            <a href="AuthServlet?action=logout" class="dropdown-item">Logout</a>
                         </li>
 
                     </ul>

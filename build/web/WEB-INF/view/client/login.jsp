@@ -87,7 +87,7 @@
     <body>
         <div class="login-container">
             <h3 class="login-header">Đăng nhập</h3>
-            <form action="LoginServlet" method="post">
+            <form action="AuthServlet" method="post">
                 <div class="form-group">
                     <label for="username">Tên người dùng</label>
                     <input type="text" class="form-control" id="username" name="username"
