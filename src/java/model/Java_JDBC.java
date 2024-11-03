@@ -281,8 +281,109 @@ public class Java_JDBC {
         return products;
     }
 
+    public static List<String> getAllBrands() {
+        List<String> brands = new ArrayList<>();
+        String sql = "SELECT DISTINCT brand FROM Products";
+
+        try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                brands.add(rs.getString("brand"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return brands;
+    }
+
     public static List<Product> searchProducts(String query) {
         return new ArrayList<>();
+    }
+
+    public static List<Product> getFilteredProducts(List<String> brands, List<String> prices, String sort) {
+        List<Product> products = new ArrayList<>();
+        Connection con = getConnectionWithSqlJdbc();
+        try {
+            StringBuilder query = new StringBuilder("SELECT * FROM Products WHERE 1=1");
+
+            if (!brands.isEmpty()) {
+                query.append(" AND brand IN (");
+                for (int i = 0; i < brands.size(); i++) {
+                    query.append("?");
+                    if (i < brands.size() - 1) {
+                        query.append(", ");
+                    }
+                }
+                query.append(")");
+            }
+
+            if (!prices.isEmpty()) {
+                int pricesLeft = prices.size();
+                for (String price : prices) {            
+                    switch (price) {
+                        case "duoi-10-trieu":
+                            if (pricesLeft == prices.size())
+                                query.append(" AND price < 10000000");
+                            else if (pricesLeft < prices.size())
+                                query.append(" OR price < 10000000");                             
+                            pricesLeft--;
+                            break;
+                        case "10-15-trieu":
+                            if (pricesLeft == prices.size())
+                                query.append(" AND price BETWEEN 10000000 AND 15000000");
+                            else if (pricesLeft < prices.size())
+                                query.append(" OR price BETWEEN 10000000 AND 15000000");
+                            pricesLeft--;
+                            break;
+                        case "15-20-trieu":
+                            if (pricesLeft == prices.size())
+                                query.append(" AND price BETWEEN 15000000 AND 20000000");
+                            else if (pricesLeft < prices.size())
+                                query.append(" OR price BETWEEN 15000000 AND 20000000");
+                            pricesLeft--;                          
+                            break;
+                        case "tren-20-trieu":
+                            if (pricesLeft == prices.size())
+                                query.append(" AND price > 20000000");
+                            else if (pricesLeft < prices.size())
+                                query.append(" OR price > 20000000");
+                            pricesLeft--;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if ("gia-tang-dan".equals(sort)) {
+                query.append(" ORDER BY price ASC");
+            } else if ("gia-giam-dan".equals(sort)) {
+                query.append(" ORDER BY price DESC");
+            }
+
+            PreparedStatement ps = con.prepareStatement(query.toString());
+
+            int index = 1;
+            for (String brand : brands) {
+                ps.setString(index++, brand);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("product_id"));
+                product.setName(rs.getString("product_name"));
+                product.setBrand(rs.getString("brand"));
+                product.setPrice(rs.getDouble("price"));
+                product.setImageUrl(rs.getString("image_url"));
+                product.setDescription(rs.getString("description"));
+                product.setStockQuantity(rs.getInt("stock_quantity"));
+                products.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
     }
 
 }

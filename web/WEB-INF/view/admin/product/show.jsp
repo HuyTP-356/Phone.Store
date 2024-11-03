@@ -7,7 +7,7 @@
 <%
     HttpSession session1 = request.getSession(false);
     if (session1 == null || session1.getAttribute("username") == null) {
-        response.sendRedirect("LoginServlet");
+        response.sendRedirect("AuthServlet?action=login");
         return;
     }
 %>

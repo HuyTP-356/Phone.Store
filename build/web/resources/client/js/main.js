@@ -143,3 +143,33 @@
     button.parent().parent().find("input").val(newVal);
   });
 })(jQuery);
+
+const filterProduct = document
+  .getElementById("btnFilter")
+  .addEventListener("click", function () {
+    let selectedBrands = [];
+    document
+      .querySelectorAll("#factoryFilter input[type=checkbox]:checked")
+      .forEach((checkbox) => {
+        selectedBrands.push(checkbox.value);
+      });
+
+    let selectedPrices = [];
+    document
+      .querySelectorAll("#priceFilter input[type=checkbox]:checked")
+      .forEach((checkbox) => {
+        selectedPrices.push(checkbox.value);
+      });
+
+    let selectedSort = document.querySelector(
+      "input[name=radio-sort]:checked"
+    ).value;
+
+    let url = `${
+      window.location.pathname
+    }?action=filter&brands=${selectedBrands.join(
+      ","
+    )}&prices=${selectedPrices.join(",")}&sort=${selectedSort}`;
+
+    window.location.href = url;
+  });

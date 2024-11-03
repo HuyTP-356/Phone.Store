@@ -36,6 +36,19 @@
 
         <!-- Template Stylesheet -->
         <link href="${pageContext.request.contextPath}/resources/client/css/style.css" rel="stylesheet">
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            if (message) {
+                if (message === "Product added to cart!") {
+                    // Tăng giá trị của cart-count
+                    const cartCountElement = document.getElementById('cart-count');
+                    let currentCount = parseInt(cartCountElement.textContent);
+                    cartCountElement.textContent = currentCount + 1;
+                }
+            }
+            // Chưa chắc cái này đã hoạt động được nhưng cứ tạm để đây đã
+        </script>
 
     </head>
 
