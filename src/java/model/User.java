@@ -1,6 +1,7 @@
 package model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Date;
 
 public class User {
 
@@ -9,21 +10,20 @@ public class User {
     private String email;
     private String passwordHash;
     private String fullName;
-    private int roleId;
+    private Role role;
     private String phoneNumber;
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     // Constructor
-    public User(int userId, String username, String email, String passwordHash, String fullName, int roleId,
-            String phoneNumber, LocalDateTime createdAt) {
+    public User(int userId, String username, String email, String passwordHash, String fullName,
+            String phoneNumber) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
-        this.roleId = roleId;
         this.phoneNumber = phoneNumber;
-        this.createdAt = createdAt;
+        this.createdAt = Date.from(Instant.now());
     }
 
     public String getPhoneNumber() {
@@ -74,20 +74,16 @@ public class User {
         this.fullName = fullName;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     // toString method for debugging
@@ -98,7 +94,7 @@ public class User {
                 + ", username='" + username + '\''
                 + ", email='" + email + '\''
                 + ", fullName='" + fullName + '\''
-                + ", roleId=" + roleId
+                + ", role=" + role.getName() + '\''
                 + ", createdAt=" + createdAt
                 + '}';
     }

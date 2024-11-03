@@ -28,6 +28,9 @@ public class ResourcesHandler extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }
+    
+    public static String AdminPath() { return "/WEB-INF/view/admin"; }
+    public static String ClientPath() { return "/WEB-INF/view/client"; }
    
     public static void forwardToClientPage(HttpServletRequest request, HttpServletResponse response, String page)
             throws ServletException, IOException {

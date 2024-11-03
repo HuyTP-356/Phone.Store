@@ -38,19 +38,38 @@ public class LoginServlet extends HttpServlet {
 
         try {
             if (Java_JDBC.validateUser(username, password)) {
-                // Đăng nhập thành công, tạo session cho người dùng
-                HttpSession session = request.getSession();
-                session.setAttribute("username", username);
+                // Get user by username
+                User user = Java_JDBC.getUserByUserName(username);
+                if (user.getRole().getName().equals("User")) {
 
-                // Tạo cookie nếu "Remember me" được chọn
-                if (rememberMe) {
-                    Cookie cookie = new Cookie("username", username);
-                    cookie.setMaxAge(24 * 60 * 60); // 24 giờ
-                    response.addCookie(cookie);
+                    // Đăng nhập thành công, tạo session cho người dùng
+                    HttpSession session = request.getSession();
+                    session.setAttribute("username", username);
+
+                    // Tạo cookie nếu "Remember me" được chọn
+                    if (rememberMe) {
+                        Cookie cookie = new Cookie("username", username);
+                        cookie.setMaxAge(24 * 60 * 60); // 24 giờ
+                        response.addCookie(cookie);
+                    }
+
+                    // Điều hướng người dùng đến trang danh sách sách
+                    ResourcesHandler.forwardToClientPage(request, response, "/homepage");
+                } else {
+                    // Đăng nhập thành công, tạo session cho người dùng
+                    HttpSession session = request.getSession();
+                    session.setAttribute("username", username);
+
+                    // Tạo cookie nếu "Remember me" được chọn
+                    if (rememberMe) {
+                        Cookie cookie = new Cookie("username", username);
+                        cookie.setMaxAge(24 * 60 * 60); // 24 giờ
+                        response.addCookie(cookie);
+                    }
+
+                    // Điều hướng người dùng đến trang danh sách sách
+                    ResourcesHandler.forwardToAdminPage(request, response, "/dashboard/show");
                 }
-
-                // Điều hướng người dùng đến trang danh sách sách
-                ResourcesHandler.forwardToClientPage(request, response, "/homepage");
             } else {
                 // Xử lý lỗi đăng nhập
                 request.setAttribute("errorMessage", "Tài khoản hoặc mật khẩu không hợp lệ.");
