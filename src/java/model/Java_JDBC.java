@@ -16,19 +16,19 @@ public class Java_JDBC {
         String dbPassword = "123";
         String port = "1433";
         String IP = "127.0.0.1";
-        // String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
-        // String DBName = "PhoneStore";
-        // String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-        //
-        // String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName
-        // + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
-        String ServerName = "DESKTOP-UKLNCAK";
-        String DBName = "PhoneStore";
-        String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-
-        String dbURL = "jdbc:sqlserver://" + ServerName + ":" + port
-                + ";databaseName=" + DBName
-                + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
+         String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
+         String DBName = "PhoneStore";
+         String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+        
+         String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName
+         + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
+//        String ServerName = "DESKTOP-UKLNCAK";
+//        String DBName = "PhoneStore";
+//        String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+//
+//        String dbURL = "jdbc:sqlserver://" + ServerName + ":" + port
+//                + ";databaseName=" + DBName
+//                + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
         try {
             try {
                 Class.forName(driverClass);
