@@ -14,16 +14,16 @@ public class User {
     private String fullName;
     private String phoneNumber;
     private Date createdAt;
-    
+
     // Relationship
     private Role role; // Một người dùng chỉ có 1 vai trò
     private List<Order> orders; // Một người dùng có nhiều đơn đặt hàng
     private Cart cart; // Mỗi người dùng chỉ có 1 giỏ hàng
+    private String address;
 
     // Constructor
-    public User(int userId, String username, String email, String passwordHash, String fullName,
-            String phoneNumber) {
-        this.userId = userId;
+    public User(String username, String email, String passwordHash, String fullName, String phoneNumber,
+            String address) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -31,6 +31,16 @@ public class User {
         this.phoneNumber = phoneNumber;
         this.createdAt = Date.from(Instant.now());
         this.orders = new ArrayList<>();
+        this.createdAt = Date.from(Instant.now()); // Đặt thời gian tạo mặc định
+        this.address = address;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPhoneNumber() {
@@ -92,7 +102,7 @@ public class User {
     public Date getCreatedAt() {
         return createdAt;
     }
-    
+
     public List<Order> getOrders() {
         return orders;
     }

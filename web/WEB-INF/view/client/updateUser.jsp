@@ -2,12 +2,15 @@
 <%@ page import="model.User" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<% 
-    // Check login status; redirect to login if not logged in
+<%
+    // Kiểm tra trạng thái đăng nhập; nếu chưa đăng nhập, chuyển hướng tới trang đăng nhập
     if (session.getAttribute("username") == null) { 
         response.sendRedirect("login.jsp"); 
         return; 
     }
+
+    // Lấy thông tin người dùng từ session
+    User user = (User) session.getAttribute("user");
 %>
 
 <!DOCTYPE html>
@@ -17,7 +20,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <title>Thông Tin Tài Khoản - Smartphone Shop</title>
+        <title>Cập Nhật Thông Tin - Smartphone Shop</title>
         <style>
             /* Original CSS styles */
             * {
@@ -119,63 +122,55 @@
             /* Main content styling */
             .content {
                 margin-left: 270px;
-                padding: 60px 40px;
+                padding: 80px 20px 20px 20px;
                 width: calc(100% - 290px);
                 transition: margin-left 0.3s ease;
                 margin-top: 51px;
-                background-color: #f4f5f7;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
 
-            /* Adjust content when sidebar is hidden */
+            /* Adjust content when sidebar is open */
             .content.shifted {
-                margin-left: 20px;
-                width: calc(100% - 40px);
+                margin-left: 270px;
             }
 
-            /* Card styling */
             .card {
-                background-color: #ffffff;
+                background-color: #fff;
                 border-radius: 8px;
-                padding: 30px;
+                padding: 20px;
                 margin-bottom: 20px;
-                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
 
-            /* List group styling for user info */
-.list-group-item {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 1.05em;
-    color: #333;
-}
+            .card-header {
+                font-size: 1.5em;
+                font-weight: bold;
+                color: #007bff;
+                padding-bottom: 10px;
+            }
 
-.list-group-item:last-child {
-    border-bottom: none;
-}
+            .form-group {
+                margin-bottom: 15px;
+            }
 
-/* Label and value styles */
-.item-label {
-    font-weight: bold;
-    color: #555;
-}
+            .form-group label {
+                display: block;
+                font-weight: bold;
+            }
 
-.item-value {
-    color: #333;
-    padding-left: 10px;
-}
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                margin-top: 5px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                font-size: 1em;
+            }
 
-
-            /* Button styling for updates */
             .btn-update {
                 background-color: #28a745;
-                color: #ffffff;
-                padding: 8px 16px;
-                font-size: 0.95em;
+                color: #fff;
+                padding: 10px 20px;
+                font-size: 1em;
                 border: none;
                 border-radius: 4px;
                 cursor: pointer;
@@ -186,7 +181,7 @@
                 background-color: #218838;
             }
 
-
+            /* Toggle button styling */
             .menu-toggle {
                 background-color: transparent;
                 color: #fff;
@@ -221,35 +216,33 @@
             </ul>
         </div>
 
-
         <!-- Main Content -->
         <div class="content" id="content">
-            <!-- Display User Information -->
             <div class="card">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div class="item-label"><strong>Tên đăng nhập:</strong></div>
-                        <div class="item-value">${user.username}</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="item-label"><strong>Tên người dùng:</strong></div>
-                        <div class="item-value">${user.fullName}</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="item-label"><strong>Email:</strong></div>
-                        <div class="item-value">${user.email}</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="item-label"><strong>Số điện thoại:</strong></div>
-                        <div class="item-value">${user.phoneNumber}</div>
-                    </li>
-                    <li class="list-group-item">
-                        <div class="item-label"><strong>Địa chỉ:</strong></div>
-                        <div class="item-value">${user.address}</div>
-                    </li>
-                </ul>
+                <form action="user?action=updateUser" method="post">
+                    <div class="form-group">
+                        <label>Tên đăng nhập:</label>
+                        <input type="text" name="username" value="${user.username}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Tên người dùng:</label>
+                        <input type="text" name="fullName" value="${user.fullName}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" name="email" value="${user.email}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại:</label>
+                        <input type="text" name="phoneNumber" value="${user.phoneNumber}" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ:</label>
+                        <input type="text" name="address" value="${user.address}" required />
+                    </div>
+                    <button type="submit" class="btn-update">Lưu Cập Nhật</button>
+                </form>
             </div>
-
         </div>
 
         <script>

@@ -1,6 +1,7 @@
 package model;
 
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,19 +16,19 @@ public class Java_JDBC {
         String dbPassword = "123";
         String port = "1433";
         String IP = "127.0.0.1";
-        String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
+        // String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
+        // String DBName = "PhoneStore";
+        // String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+        //
+        // String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName
+        // + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
+        String ServerName = "DESKTOP-UKLNCAK";
         String DBName = "PhoneStore";
         String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
-        String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName
+        String dbURL = "jdbc:sqlserver://" + ServerName + ":" + port
+                + ";databaseName=" + DBName
                 + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
-        // String ServerName = "DESKTOP-UKLNCAK";
-        // String DBName = "PhoneStore";
-        // String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-
-        // String dbURL = "jdbc:sqlserver://" + ServerName + ":" + port +
-        // ";databaseName=" + DBName +
-        // ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
         try {
             try {
                 Class.forName(driverClass);
@@ -46,7 +47,9 @@ public class Java_JDBC {
         List<Product> productList = new ArrayList<>();
         String query = "SELECT * FROM Products";
 
-        try (Connection connection = getConnectionWithSqlJdbc(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(query)) {
+        try (Connection connection = getConnectionWithSqlJdbc();
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(query)) {
 
             while (resultSet.next()) {
                 Product product = new Product();
@@ -92,21 +95,21 @@ public class Java_JDBC {
     public static User getUserByUserName(String username) throws Exception {
         User user = null;
 
-        String query = "SELECT user_id, username, email, password_hash, full_name, role_id, created_at, phone_number FROM Users WHERE username = ?";
+        String query = "SELECT username, email, password_hash, full_name, role_id, created_at, phonenumber, address FROM Users WHERE username = ?";
 
         try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                int userId = rs.getInt("user_id");
                 String email = rs.getString("email");
                 String passwordHash = rs.getString("password_hash");
                 String fullName = rs.getString("full_name");
-                String phoneNumber = rs.getString("phone_number");
+                String phoneNumber = rs.getString("phonenumber");
                 Role role = getRoleById(rs.getInt("role_id"));
+                String address = rs.getString("address");
 
-                user = new User(userId, username, email, passwordHash, fullName, phoneNumber);
+                user = new User(username, email, passwordHash, fullName, phoneNumber, address);
                 user.setRole(role);
             }
         } catch (SQLException e) {
@@ -129,6 +132,110 @@ public class Java_JDBC {
             return rs.next();
         } catch (Exception e) {
             throw new Exception("Error validating user", e);
+        }
+    }
+
+    public static void insertUser(User user) {
+        String insertQuery = "INSERT INTO Users (username, email, password_hash, full_name, role_id, phonenumber, created_at, address) VALUES (?, ?, ?, ?, 1, ?, ?, ?)";
+
+        try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement stmt = con.prepareStatement(insertQuery)) {
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getEmail());
+            stmt.setString(3, user.getPasswordHash());
+            stmt.setString(4, user.getFullName());
+            stmt.setString(5, user.getPhoneNumber());
+            stmt.setDate(6, new java.sql.Date(Date.from(Instant.now()).getTime()));
+            stmt.setString(7, user.getAddress());
+
+            int rowsAffected = stmt.executeUpdate();
+            System.out.println("Rows affected: " + rowsAffected); // In ra số hàng bị ảnh hưởng
+
+            if (rowsAffected == 0) {
+                throw new SQLException("Inserting user failed, no rows affected.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // In ra chi tiết lỗi
+        }
+    }
+
+    public static boolean updateUser(String username, String email, String fullName, String phoneNumber,
+            String passwordHash, String address) {
+        // Retrieve the current user
+        User currentUser;
+        try {
+            currentUser = getUserByUserName(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // Build the update query
+        StringBuilder sql = new StringBuilder("UPDATE Users SET ");
+        boolean isFirst = true;
+
+        if (email != null) {
+            sql.append("email = ?");
+            isFirst = false;
+        }
+        if (fullName != null) {
+            if (!isFirst) {
+                sql.append(", ");
+            }
+            sql.append("full_name = ?");
+            isFirst = false;
+        }
+        if (phoneNumber != null) {
+            if (!isFirst) {
+                sql.append(", ");
+            }
+            sql.append("phonenumber = ?");
+            isFirst = false;
+        }
+        if (passwordHash != null) {
+            if (!isFirst) {
+                sql.append(", ");
+            }
+            sql.append("password_hash = ?");
+            isFirst = false;
+        }
+        if (address != null) {
+            if (!isFirst) {
+                sql.append(", ");
+            }
+            sql.append("address = ?");
+        }
+        sql.append(" WHERE username = ?");
+
+        try (Connection conn = getConnectionWithSqlJdbc();
+                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            if (email != null) {
+                pstmt.setString(paramIndex++, email);
+            }
+            if (fullName != null) {
+                pstmt.setString(paramIndex++, fullName);
+            }
+            if (phoneNumber != null) {
+                pstmt.setString(paramIndex++, phoneNumber);
+            }
+            if (passwordHash != null) {
+                pstmt.setString(paramIndex++, passwordHash);
+            }
+            if (address != null) {
+                pstmt.setString(paramIndex++, address);
+            }
+            pstmt.setString(paramIndex, username);
+
+            System.out.println("Executing update with query: " + sql);
+            System.out.println("Parameters - username: " + username);
+
+            int rowsUpdated = pstmt.executeUpdate();
+            System.out.println("Rows updated: " + rowsUpdated);
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -247,7 +354,9 @@ public class Java_JDBC {
         String sql = "SELECT COUNT(*) FROM Products";
         int count = 0;
 
-        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = getConnectionWithSqlJdbc();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 count = rs.getInt(1);
             }
@@ -262,7 +371,9 @@ public class Java_JDBC {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT TOP 16 * FROM Products ORDER BY product_id";
 
-        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = getConnectionWithSqlJdbc();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 Product product = new Product();
@@ -286,7 +397,9 @@ public class Java_JDBC {
         List<String> brands = new ArrayList<>();
         String sql = "SELECT DISTINCT brand FROM Products";
 
-        try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection con = getConnectionWithSqlJdbc();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 brands.add(rs.getString("brand"));
@@ -494,30 +607,28 @@ public class Java_JDBC {
                 }
                 break;
             case "increase":
-                String increaseItemQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE product_id = ?";
-                 {
-                    try {
-                        ps = conn.prepareStatement(increaseItemQuery);
-                        ps.setInt(1, productId);
-                        ps.executeUpdate();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                String increaseItemQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE product_id = ?"; {
+                try {
+                    ps = conn.prepareStatement(increaseItemQuery);
+                    ps.setInt(1, productId);
+                    ps.executeUpdate();
+                } catch (SQLException ex) {
+                    Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
                 break;
 
             case "decrease":
-                String decreaseItemQuery = "UPDATE CartItem SET quantity = quantity - 1 WHERE product_id = ?";
-                 {
-                    try {
-                        ps = conn.prepareStatement(decreaseItemQuery);
-                        ps.setInt(1, productId);
-                        ps.executeUpdate();
-                                          
-                    } catch (SQLException ex) {
-                        Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                String decreaseItemQuery = "UPDATE CartItem SET quantity = quantity - 1 WHERE product_id = ?"; {
+                try {
+                    ps = conn.prepareStatement(decreaseItemQuery);
+                    ps.setInt(1, productId);
+                    ps.executeUpdate();
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
                 break;
             default:
                 break;

@@ -7,12 +7,13 @@ import model.Java_JDBC;
 import model.User;
 import java.io.IOException;
 import java.util.List;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Cart;
 import model.Product;
 
-@WebServlet(name = "AuthServlet", urlPatterns = {"/AuthServlet"})
+@WebServlet(name = "AuthServlet", urlPatterns = { "/AuthServlet" })
 public class AuthServlet extends HttpServlet {
 
     @Override
@@ -61,10 +62,12 @@ public class AuthServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         HttpSession session = request.getSession();
+        HttpSession session = request.getSession();
 
         try {
             if (Java_JDBC.validateUser(username, password)) {
                 User user = Java_JDBC.getUserByUserName(username);
+                session.setAttribute("role", user.getRole().getName());
                 session.setAttribute("role", user.getRole().getName());
                 session.setAttribute("username", username);
 

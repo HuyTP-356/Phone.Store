@@ -31,7 +31,7 @@ import model.Java_JDBC;
 import model.Product;
 import model.User;
 
-@WebServlet(name = "ClientServlet", urlPatterns = {"/client"})
+@WebServlet(name = "ClientServlet", urlPatterns = { "/client" })
 public class ClientServlet extends HttpServlet {
 
     private class ResponseMessage {
@@ -55,7 +55,8 @@ public class ClientServlet extends HttpServlet {
             this.cartItemCount = cartItemCount;
         }
 
-        public ResponseMessage(boolean success, String message, double totalPrice, int cartItemCount, int newQuantity, double newTotalPrice) {
+        public ResponseMessage(boolean success, String message, double totalPrice, int cartItemCount, int newQuantity,
+                double newTotalPrice) {
             this.success = success;
             this.message = message;
             this.totalPrice = totalPrice;
@@ -132,14 +133,15 @@ public class ClientServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -169,10 +171,10 @@ public class ClientServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -242,7 +244,8 @@ public class ClientServlet extends HttpServlet {
             session.setAttribute("cart", cart);
 
             // Gửi phản hồi thành công
-            ResponseMessage msg = new ResponseMessage(true, "Đã thêm vào giỏ hàng thành công!", totalPrice, cart.getCartDetails().size());
+            ResponseMessage msg = new ResponseMessage(true, "Đã thêm vào giỏ hàng thành công!", totalPrice,
+                    cart.getCartDetails().size());
             out.print(gson.toJson(msg));
             out.flush();
             response.flushBuffer();
@@ -400,7 +403,8 @@ public class ClientServlet extends HttpServlet {
             session.setAttribute("cart", cart);
 
             // Gửi phản hồi thành công
-            ResponseMessage msg = new ResponseMessage(true, "Đã xóa sản phẩm khỏi giỏ hàng.", totalPrice, cart.getCartDetails().size());
+            ResponseMessage msg = new ResponseMessage(true, "Đã xóa sản phẩm khỏi giỏ hàng.", totalPrice,
+                    cart.getCartDetails().size());
             out.print(gson.toJson(msg));
             out.flush();
             response.flushBuffer();
@@ -409,7 +413,8 @@ public class ClientServlet extends HttpServlet {
         }
     }
 
-    private void showCart(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    private void showCart(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         try {
             HttpSession session = request.getSession(false);
             if (session == null || session.getAttribute("username") == null) {
@@ -434,25 +439,29 @@ public class ClientServlet extends HttpServlet {
         }
     }
 
-    private void filterProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void filterProduct(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         HttpSession session = request.getSession();
 
         String brands = request.getParameter("brands");
         String prices = request.getParameter("prices");
         String sort = request.getParameter("sort");
 
-// Lấy các giá trị lọc trước đó từ Session
+        // Lấy các giá trị lọc trước đó từ Session
         String prevBrands = (String) session.getAttribute("prevBrands");
         String prevPrices = (String) session.getAttribute("prevPrices");
         String prevSort = (String) session.getAttribute("prevSort");
 
         List<Product> productsFiltered;
 
-// Kiểm tra xem có thay đổi yêu cầu lọc không
-        if (!Objects.equals(brands, prevBrands) || !Objects.equals(prices, prevPrices) || !Objects.equals(sort, prevSort)) {
+        // Kiểm tra xem có thay đổi yêu cầu lọc không
+        if (!Objects.equals(brands, prevBrands) || !Objects.equals(prices, prevPrices)
+                || !Objects.equals(sort, prevSort)) {
             // Nếu có thay đổi, tiến hành lọc và lưu kết quả vào session
-            List<String> brandList = brands != null && !brands.isEmpty() ? Arrays.asList(brands.split(",")) : new ArrayList<>();
-            List<String> priceList = prices != null && !prices.isEmpty() ? Arrays.asList(prices.split(",")) : new ArrayList<>();
+            List<String> brandList = brands != null && !brands.isEmpty() ? Arrays.asList(brands.split(","))
+                    : new ArrayList<>();
+            List<String> priceList = prices != null && !prices.isEmpty() ? Arrays.asList(prices.split(","))
+                    : new ArrayList<>();
 
             productsFiltered = Java_JDBC.getFilteredProducts(brandList, priceList, sort);
 
@@ -465,7 +474,7 @@ public class ClientServlet extends HttpServlet {
             // Nếu không có thay đổi, sử dụng productsFiltered từ session
             productsFiltered = (List<Product>) session.getAttribute("productsFiltered");
             if (productsFiltered == null) {
-                productsFiltered = Java_JDBC.getAllProducts();  // Lấy tất cả sản phẩm nếu chưa có lọc
+                productsFiltered = Java_JDBC.getAllProducts(); // Lấy tất cả sản phẩm nếu chưa có lọc
                 session.setAttribute("productsFiltered", productsFiltered);
             }
         }
@@ -492,13 +501,15 @@ public class ClientServlet extends HttpServlet {
         request.setAttribute("products", products);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
-        request.setAttribute("url", request.getContextPath() + "/client?action=filter&brands=" + brands + "&prices=" + prices + "&sort=" + sort);
+        request.setAttribute("url", request.getContextPath() + "/client?action=filter&brands=" + brands + "&prices="
+                + prices + "&sort=" + sort);
 
         request.setAttribute("productsFiltered", productsFiltered);
         request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/allProductsPage.jsp").forward(request, response);
     }
 
-    private void showProductPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void showProductPage(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         int recordsPerPage = 9;
         int page = 1;
 
@@ -524,7 +535,8 @@ public class ClientServlet extends HttpServlet {
         request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/allProductsPage.jsp").forward(request, response);
     }
 
-    private void showProductInformation(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void showProductInformation(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         int productId = Integer.parseInt(request.getParameter("id"));
         Product product = Java_JDBC.getProductById(productId);
         request.setAttribute("product", product);
