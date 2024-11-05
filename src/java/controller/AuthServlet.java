@@ -62,7 +62,6 @@ public class AuthServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         HttpSession session = request.getSession();
-        HttpSession session = request.getSession();
 
         try {
             if (Java_JDBC.validateUser(username, password)) {
