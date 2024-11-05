@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Cart;
 import model.Product;
 
 @WebServlet(name = "AuthServlet", urlPatterns = {"/AuthServlet"})
@@ -66,6 +67,13 @@ public class AuthServlet extends HttpServlet {
                 User user = Java_JDBC.getUserByUserName(username);
                 session.setAttribute("role", user.getRole().getName());
                 session.setAttribute("username", username);
+
+                // Lấy giỏ hàng và gán vào User
+                Cart cart = Java_JDBC.getCartForUser(user);
+
+                // Đặt User đã cập nhật vào session
+                session.setAttribute("user", user);
+                session.setAttribute("cart", cart);
                 List<Product> products = Java_JDBC.getFirst16Products();
                 request.setAttribute("products", products);
                 if ("User".equals(user.getRole().getName())) {

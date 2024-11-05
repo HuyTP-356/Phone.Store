@@ -4,6 +4,7 @@
  */
 package controller;
 
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,26 +19,102 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import model.Cart;
+import model.CartDetail;
 import model.Java_JDBC;
 import model.Product;
+import model.User;
 
-/**
- *
- * @author Ngo Duong Hoang Chau
- */
 @WebServlet(name = "ClientServlet", urlPatterns = {"/client"})
 public class ClientServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private class ResponseMessage {
+
+        private boolean success;
+        private String message;
+        private double totalPrice;
+        private int cartItemCount;
+        private int newQuantity;
+        private double newTotalPrice;
+
+        public ResponseMessage(boolean success, String message) {
+            this.success = success;
+            this.message = message;
+        }
+
+        public ResponseMessage(boolean success, String message, double totalPrice, int cartItemCount) {
+            this.success = success;
+            this.message = message;
+            this.totalPrice = totalPrice;
+            this.cartItemCount = cartItemCount;
+        }
+
+        public ResponseMessage(boolean success, String message, double totalPrice, int cartItemCount, int newQuantity, double newTotalPrice) {
+            this.success = success;
+            this.message = message;
+            this.totalPrice = totalPrice;
+            this.cartItemCount = cartItemCount;
+            this.newQuantity = newQuantity;
+            this.newTotalPrice = newTotalPrice;
+        }
+
+        // Getters và Setters nếu cần
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public double getTotalPrice() {
+            return totalPrice;
+        }
+
+        public void setTotalPrice(double totalPrice) {
+            this.totalPrice = totalPrice;
+        }
+
+        public int getCartItemCount() {
+            return cartItemCount;
+        }
+
+        public void setCartItemCount(int cartItemCount) {
+            this.cartItemCount = cartItemCount;
+        }
+
+        public int getNewQuantity() {
+            return newQuantity;
+        }
+
+        public void setNewQuantity(int newQuantity) {
+            this.newQuantity = newQuantity;
+        }
+
+        public double getNewTotalPrice() {
+            return newTotalPrice;
+        }
+
+        public void setNewTotalPrice(double newTotalPrice) {
+            this.newTotalPrice = newTotalPrice;
+        }
+
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -70,9 +147,6 @@ public class ClientServlet extends HttpServlet {
         String action = request.getParameter("action");
         if (null != action) {
             switch (action) {
-                case "addToCart":
-                    handleAddToCart(request, response);
-                    break;
                 case "showCart":
                     showCart(request, response);
                     break;
@@ -103,28 +177,261 @@ public class ClientServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        if (null != action) {
+            switch (action) {
+                case "addToCart":
+                    handleAddToCart(request, response);
+                    break;
+                case "updateCart":
+                    handleUpdateCart(request, response);
+                    break;
+                case "removeFromCart":
+                    handleRemoveFromCart(request, response);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void handleAddToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession(false); // Lấy session hiện tại
-        if (session == null || session.getAttribute("user") == null) {
-            // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
-            response.sendRedirect(ResourcesHandler.ClientPath() + "/login.jsp");
-            return;
+        try {
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
+
+            Gson gson = new Gson();
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+
+            if (currentUser == null) {
+                // Người dùng chưa đăng nhập
+                ResponseMessage msg = new ResponseMessage(false, "Bạn cần đăng nhập trước khi thêm vào giỏ hàng.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            // Lấy tham số productId từ yêu cầu
+            String productIdStr = request.getParameter("id");
+            if (productIdStr == null) {
+                ResponseMessage msg = new ResponseMessage(false, "Không tìm thấy sản phẩm.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            int productId;
+            try {
+                productId = Integer.parseInt(productIdStr);
+            } catch (NumberFormatException e) {
+                ResponseMessage msg = new ResponseMessage(false, "ID sản phẩm không hợp lệ.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            Cart cart = Java_JDBC.updateCartForUser(currentUser, productId, request.getParameter("action"));
+
+            // Tính tổng giá
+            double totalPrice = 0.0;
+            for (CartDetail cartDetail : cart.getCartDetails()) {
+                totalPrice += cartDetail.getProduct().getPrice() * cartDetail.getQuantity();
+            }
+
+            session.setAttribute("cart", cart);
+
+            // Gửi phản hồi thành công
+            ResponseMessage msg = new ResponseMessage(true, "Đã thêm vào giỏ hàng thành công!", totalPrice, cart.getCartDetails().size());
+            out.print(gson.toJson(msg));
+            out.flush();
+            response.flushBuffer();
+        } catch (Exception ex) {
+            Logger.getLogger(ClientServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        // Người dùng đã đăng nhập, thực hiện thêm vào giỏ hàng
-        int productId = Integer.parseInt(request.getParameter("id"));
-        // Logic để thêm sản phẩm vào giỏ hàng
-        // ...
-
-        // Chuyển hướng lại trang chính (hoặc hiển thị thông báo thành công)
-        response.sendRedirect("homepage.jsp?message=Product added to cart!");
     }
 
-    private void showCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleUpdateCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
 
+            Gson gson = new Gson();
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+
+            String productIdStr = request.getParameter("id");
+            String actionType = request.getParameter("actionUpdate"); // "increase" hoặc "decrease"
+
+            if (productIdStr == null || actionType == null) {
+                ResponseMessage msg = new ResponseMessage(false, "Thông tin không hợp lệ.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            int productId;
+            try {
+                productId = Integer.parseInt(productIdStr);
+            } catch (NumberFormatException e) {
+                ResponseMessage msg = new ResponseMessage(false, "ID sản phẩm không hợp lệ.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            final Cart cart = (Cart) session.getAttribute("cart");
+
+            CartDetail targetDetail = null;
+            for (CartDetail detail : cart.getCartDetails()) {
+                if (detail.getProduct().getId() == productId) {
+                    targetDetail = detail;
+                    break;
+                }
+            }
+
+            if (targetDetail == null) {
+                ResponseMessage msg = new ResponseMessage(false, "Sản phẩm không có trong giỏ hàng.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            OptionalInt indexOpt = IntStream.range(0, cart.getCartDetails().size())
+                    .filter(i -> cart.getCartDetails().get(i).getProduct().getId() == productId)
+                    .findFirst();
+            int index = indexOpt.getAsInt();
+            CartDetail updateCartDetail = cart.getCartDetails().get(index);
+            switch (actionType) {
+                case "increase":
+                    Java_JDBC.updateCartForUser(currentUser, productId, actionType);
+                    updateCartDetail.setQuantity(updateCartDetail.getQuantity() + 1);
+                    cart.getCartDetails().set(index, updateCartDetail);
+                    break;
+                case "decrease":
+                    Java_JDBC.updateCartForUser(currentUser, productId, actionType);
+                    if (updateCartDetail.getQuantity() <= 1) {
+                        ResponseMessage msg = new ResponseMessage(false, "Số lượng sản phẩm đang là 1. Không thể bớt");
+                        out.print(gson.toJson(msg));
+                        out.flush();
+                        return;
+                    } else {
+                        updateCartDetail.setQuantity(updateCartDetail.getQuantity() - 1);
+                        cart.getCartDetails().set(index, updateCartDetail);
+                    }
+                    break;
+                default:
+                    ResponseMessage msg = new ResponseMessage(false, "Hành động không hợp lệ.");
+                    out.print(gson.toJson(msg));
+                    out.flush();
+                    return;
+            }
+
+            // Tính tổng giá trị giỏ hàng
+            double totalPrice = 0.0;
+            for (CartDetail cartDetail : cart.getCartDetails()) {
+                totalPrice += cartDetail.getProduct().getPrice() * cartDetail.getQuantity();
+            }
+
+            // Cập nhật giỏ hàng trong session
+            session.setAttribute("cart", cart);
+
+            // Gửi phản hồi thành công với số lượng mới và tổng giá
+            ResponseMessage msg = new ResponseMessage(
+                    true,
+                    "Cập nhật giỏ hàng thành công!",
+                    totalPrice, // Tổng giá của giỏ hàng
+                    cart.getCartDetails().size(), // Số lượng mặt hàng trong giỏ hàng
+                    targetDetail.getQuantity(), // Số lượng mới của sản phẩm
+                    targetDetail.getProduct().getPrice() * targetDetail.getQuantity() // Thành tiền mới của sản phẩm
+            );
+            out.print(gson.toJson(msg));
+            out.flush();
+            response.flushBuffer();
+        } catch (Exception ex) {
+            Logger.getLogger(ClientServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void handleRemoveFromCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
+
+            Gson gson = new Gson();
+            response.setContentType("application/json");
+            PrintWriter out = response.getWriter();
+
+            String productIdStr = request.getParameter("id");
+
+            if (productIdStr == null) {
+                ResponseMessage msg = new ResponseMessage(false, "Không tìm thấy sản phẩm.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            int productId;
+            try {
+                productId = Integer.parseInt(productIdStr);
+            } catch (NumberFormatException e) {
+                ResponseMessage msg = new ResponseMessage(false, "ID sản phẩm không hợp lệ.");
+                out.print(gson.toJson(msg));
+                out.flush();
+                return;
+            }
+
+            Cart cart = (Cart) session.getAttribute("cart");
+
+            for (CartDetail cartDetail : cart.getCartDetails()) {
+                if (cartDetail.getProduct().getId() == productId) {
+                    cart = Java_JDBC.updateCartForUser(currentUser, productId, request.getParameter("action"));
+                    break;
+                }
+            }
+
+            // Tính tổng giá trị giỏ hàng
+            double totalPrice = 0.0;
+            for (CartDetail cartDetail : cart.getCartDetails()) {
+                totalPrice += cartDetail.getProduct().getPrice() * cartDetail.getQuantity();
+            }
+
+            // Cập nhật giỏ hàng trong session
+            session.setAttribute("cart", cart);
+
+            // Gửi phản hồi thành công
+            ResponseMessage msg = new ResponseMessage(true, "Đã xóa sản phẩm khỏi giỏ hàng.", totalPrice, cart.getCartDetails().size());
+            out.print(gson.toJson(msg));
+            out.flush();
+            response.flushBuffer();
+        } catch (Exception ex) {
+            Logger.getLogger(ClientServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void showCart(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        try {
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("username") == null) {
+                response.sendRedirect("AuthServlet?action=login");
+                return;
+            }
+
+            User user = (User) session.getAttribute("user");
+            Cart cart = Java_JDBC.getCartForUser(user);
+
+            double totalPrice = 0.0;
+            for (CartDetail cartDetail : cart.getCartDetails()) {
+                totalPrice += cartDetail.getProduct().getPrice() * cartDetail.getQuantity();
+            }
+
+            request.setAttribute("cart", cart);
+            request.setAttribute("totalPrice", totalPrice);
+
+            request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/cartDetail.jsp").forward(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(ClientServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void filterProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -181,9 +488,6 @@ public class ClientServlet extends HttpServlet {
                 .collect(Collectors.toList());
 
         int totalPages = (int) Math.ceil(totalRecords * 1.0 / recordsPerPage);
-
-        List<String> allBrands = Java_JDBC.getAllBrands();
-        request.setAttribute("brands", allBrands);
 
         request.setAttribute("products", products);
         request.setAttribute("currentPage", page);

@@ -26,10 +26,13 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
               rel="stylesheet">
+        
 
         <!-- Libraries Stylesheet -->
         <link href="${pageContext.request.contextPath}/resources/client/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
         <link href="${pageContext.request.contextPath}/resources/client/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css">
+
 
 
         <!-- Customized Bootstrap Stylesheet -->
@@ -214,8 +217,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </c:forEach>
-                            </div>
+                                </c:forEach>                            </div>
                             <div class="mt-4">
                                 <pg:Pagination totalPages="${totalPages}" currentPage="${currentPage}" url="${url}" />
                             </div>
@@ -237,6 +239,7 @@
         <!-- JavaScript Libraries -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
         <script src="${pageContext.request.contextPath}/resources/client/lib/easing/easing.min.js"></script>
         <script src="${pageContext.request.contextPath}/resources/client/lib/waypoints/waypoints.min.js"></script>
         <script src="${pageContext.request.contextPath}/resources/client/lib/lightbox/js/lightbox.min.js"></script>
@@ -244,6 +247,7 @@
 
         <!-- Template Javascript -->
         <script src="${pageContext.request.contextPath}/resources/client/js/main.js"></script>
+        
 
     </body>
 

@@ -1,7 +1,9 @@
 package model;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class User {
 
@@ -10,9 +12,13 @@ public class User {
     private String email;
     private String passwordHash;
     private String fullName;
-    private Role role;
     private String phoneNumber;
     private Date createdAt;
+    
+    // Relationship
+    private Role role; // Một người dùng chỉ có 1 vai trò
+    private List<Order> orders; // Một người dùng có nhiều đơn đặt hàng
+    private Cart cart; // Mỗi người dùng chỉ có 1 giỏ hàng
 
     // Constructor
     public User(int userId, String username, String email, String passwordHash, String fullName,
@@ -24,6 +30,7 @@ public class User {
         this.fullName = fullName;
         this.phoneNumber = phoneNumber;
         this.createdAt = Date.from(Instant.now());
+        this.orders = new ArrayList<>();
     }
 
     public String getPhoneNumber() {
@@ -84,6 +91,22 @@ public class User {
 
     public Date getCreatedAt() {
         return createdAt;
+    }
+    
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     // toString method for debugging

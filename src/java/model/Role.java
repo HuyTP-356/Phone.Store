@@ -1,8 +1,11 @@
 package model;
 
+import java.util.List;
+
 public class Role {
     private String name;
     private String description;
+    private List<User> listUsers; 
 
     public Role(String name, String description) {
         this.name = name;

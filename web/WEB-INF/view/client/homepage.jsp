@@ -26,6 +26,8 @@
         <!-- Libraries Stylesheet -->
         <link href="${pageContext.request.contextPath}/resources/client/lib/lightbox/css/lightbox.min.css"
               rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css">
+
         <link
             href="${pageContext.request.contextPath}/resources/client/lib/owlcarousel/assets/owl.carousel.min.css"
             rel="stylesheet">
@@ -36,19 +38,6 @@
 
         <!-- Template Stylesheet -->
         <link href="${pageContext.request.contextPath}/resources/client/css/style.css" rel="stylesheet">
-        <script>
-            const urlParams = new URLSearchParams(window.location.search);
-            const message = urlParams.get('message');
-            if (message) {
-                if (message === "Product added to cart!") {
-                    // Tăng giá trị của cart-count
-                    const cartCountElement = document.getElementById('cart-count');
-                    let currentCount = parseInt(cartCountElement.textContent);
-                    cartCountElement.textContent = currentCount + 1;
-                }
-            }
-            // Chưa chắc cái này đã hoạt động được nhưng cứ tạm để đây đã
-        </script>
 
     </head>
 
@@ -98,7 +87,7 @@
                                                              class="img-fluid w-100 rounded-top" alt="">
                                                     </div>
                                                     <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
-                                                         style="top: 10px; left: 10px;">Laptop</div>
+                                                         style="top: 10px; left: 10px;">Smartphone</div>
                                                     <div
                                                         class="p-4 border border-secondary border-top-0 rounded-bottom">
                                                         <h4 style="font-size: 15px;">
@@ -110,14 +99,12 @@
                                                                class="text-dark fw-bold mb-3">
                                                                 <fmt:formatNumber value="${product.price}" /> đ
                                                             </p>
-                                                            <form action="ClientServlet?action=addToCart&id=${product.id}"
-                                                                  method="post">
-                                                                <button
-                                                                    class="mx-auto btn border border-secondary rounded-pill px-3 text-primary">
-                                                                    <i
-                                                                        class="fa fa-shopping-bag me-2 text-primary"></i>
-                                                                    Add to cart</button>
-                                                            </form>
+<!--                                                            <form id="add-to-cart-form" action="${pageContext.request.contextPath}/client?action=addToCart&id=${product.id}" method="post">-->
+                                                            <button class="mx-auto btn border border-secondary rounded-pill px-3 text-primary add-to-cart-btn" data-id="${product.id}" data-context="${pageContext.request.contextPath}">
+                                                                <i class="fa fa-shopping-bag me-2 text-primary"></i>
+                                                                Add to cart
+                                                            </button>
+                                                            <!--</form>-->
                                                         </div>
                                                     </div>
                                                 </div>
@@ -146,6 +133,7 @@
         <!-- JavaScript Libraries -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
         <script src="${pageContext.request.contextPath}/resources/client/lib/easing/easing.min.js"></script>
         <script
         src="${pageContext.request.contextPath}/resources/client/lib/waypoints/waypoints.min.js"></script>
@@ -156,6 +144,7 @@
 
         <!-- Template Javascript -->
         <script src="${pageContext.request.contextPath}/resources/client/js/main.js"></script>
+
     </body>
 
 </html>

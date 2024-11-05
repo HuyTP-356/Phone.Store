@@ -3,6 +3,7 @@ package model;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -319,34 +320,38 @@ public class Java_JDBC {
 
             if (!prices.isEmpty()) {
                 int pricesLeft = prices.size();
-                for (String price : prices) {            
+                for (String price : prices) {
                     switch (price) {
                         case "duoi-10-trieu":
-                            if (pricesLeft == prices.size())
+                            if (pricesLeft == prices.size()) {
                                 query.append(" AND price < 10000000");
-                            else if (pricesLeft < prices.size())
-                                query.append(" OR price < 10000000");                             
+                            } else if (pricesLeft < prices.size()) {
+                                query.append(" OR price < 10000000");
+                            }
                             pricesLeft--;
                             break;
                         case "10-15-trieu":
-                            if (pricesLeft == prices.size())
+                            if (pricesLeft == prices.size()) {
                                 query.append(" AND price BETWEEN 10000000 AND 15000000");
-                            else if (pricesLeft < prices.size())
+                            } else if (pricesLeft < prices.size()) {
                                 query.append(" OR price BETWEEN 10000000 AND 15000000");
+                            }
                             pricesLeft--;
                             break;
                         case "15-20-trieu":
-                            if (pricesLeft == prices.size())
+                            if (pricesLeft == prices.size()) {
                                 query.append(" AND price BETWEEN 15000000 AND 20000000");
-                            else if (pricesLeft < prices.size())
+                            } else if (pricesLeft < prices.size()) {
                                 query.append(" OR price BETWEEN 15000000 AND 20000000");
-                            pricesLeft--;                          
+                            }
+                            pricesLeft--;
                             break;
                         case "tren-20-trieu":
-                            if (pricesLeft == prices.size())
+                            if (pricesLeft == prices.size()) {
                                 query.append(" AND price > 20000000");
-                            else if (pricesLeft < prices.size())
+                            } else if (pricesLeft < prices.size()) {
                                 query.append(" OR price > 20000000");
+                            }
                             pricesLeft--;
                             break;
                         default:
@@ -384,6 +389,141 @@ public class Java_JDBC {
             e.printStackTrace();
         }
         return products;
+    }
+
+    public static Cart getCartForUser(User user) {
+        Cart cart = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = getConnectionWithSqlJdbc();
+
+            // Nếu giỏ hàng tồn tại, lấy thông tin cart_id và các sản phẩm
+            String checkItemQuery = "SELECT cart_id, user_id FROM Cart WHERE user_id = ?";
+            stmt = conn.prepareStatement(checkItemQuery);
+            stmt.setInt(1, user.getUserId());
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                int cartId = rs.getInt("cart_id");
+
+                cart = new Cart(cartId, user);
+
+                List<CartDetail> cartDetails = new ArrayList<>();
+                String sql = "SELECT product_id, quantity FROM CartItem WHERE cart_id = ?";
+                PreparedStatement detailStmt = conn.prepareStatement(sql);
+                detailStmt.setInt(1, cartId);
+                ResultSet detailRs = detailStmt.executeQuery();
+
+                while (detailRs.next()) {
+                    int productId = detailRs.getInt("product_id");
+                    int quantity = detailRs.getInt("quantity");
+
+                    Product product = getProductById(productId);
+                    if (product != null) {
+                        CartDetail cartDetail = new CartDetail(product, quantity);
+                        cartDetails.add(cartDetail);
+                    }
+                }
+                cart.setCartDetails(cartDetails);
+                user.setCart(cart); // Gắn giỏ hàng vào user
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cart;
+    }
+
+    public static Cart updateCartForUser(User user, int productId, String action) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        conn = getConnectionWithSqlJdbc();
+        Cart cart = getCartForUser(user);
+
+        switch (action) {
+            case "addToCart":
+                try {
+                    int cartId = cart.getCartId(); // Lấy cart_id từ đối tượng Cart
+
+                    // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+                    String checkItemQuery = "SELECT quantity FROM CartItem WHERE cart_id = ? AND product_id = ?";
+                    ps = conn.prepareStatement(checkItemQuery);
+                    ps.setInt(1, cartId);
+                    ps.setInt(2, productId);
+                    rs = ps.executeQuery();
+
+                    if (rs.next()) {
+                        // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng thêm 1
+                        String updateItemQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE cart_id = ? AND product_id = ?";
+                        ps = conn.prepareStatement(updateItemQuery);
+                        ps.setInt(1, cartId);
+                        ps.setInt(2, productId);
+                        ps.executeUpdate();
+                    } else {
+                        // Nếu sản phẩm chưa có trong giỏ hàng, thêm sản phẩm mới với số lượng là 1
+                        String addItemQuery = "INSERT INTO CartItem (cart_id, product_id, quantity) VALUES (?, ?, ?)";
+                        ps = conn.prepareStatement(addItemQuery);
+                        ps.setInt(1, cartId);
+                        ps.setInt(2, productId);
+                        ps.setInt(3, 1); // Số lượng ban đầu là 1
+                        CartDetail newCartDetail = new CartDetail(getProductById(productId), 1);
+                        cart.getCartDetails().add(newCartDetail);
+                        ps.executeUpdate();
+                    }
+
+                    // Cập nhật chi tiết giỏ hàng sau khi thay đổi
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "removeFromCart":
+                try {
+                    int cartId = user.getCart().getCartId(); // Lấy cart_id từ đối tượng Cart
+
+                    String deleteItemQuery = "DELETE FROM CartItem WHERE cart_id = ? AND product_id = ?";
+                    ps = conn.prepareStatement(deleteItemQuery);
+                    ps.setInt(1, cartId);
+                    ps.setInt(2, productId);
+                    ps.executeUpdate();
+                    cart.getCartDetails().removeIf(cartDetail -> cartDetail.getProduct().getId() == productId);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case "increase":
+                String increaseItemQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE product_id = ?";
+                 {
+                    try {
+                        ps = conn.prepareStatement(increaseItemQuery);
+                        ps.setInt(1, productId);
+                        ps.executeUpdate();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+
+            case "decrease":
+                String decreaseItemQuery = "UPDATE CartItem SET quantity = quantity - 1 WHERE product_id = ?";
+                 {
+                    try {
+                        ps = conn.prepareStatement(decreaseItemQuery);
+                        ps.setInt(1, productId);
+                        ps.executeUpdate();
+                                          
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        return cart;
     }
 
 }
