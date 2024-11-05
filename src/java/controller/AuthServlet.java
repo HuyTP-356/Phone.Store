@@ -67,7 +67,6 @@ public class AuthServlet extends HttpServlet {
             if (Java_JDBC.validateUser(username, password)) {
                 User user = Java_JDBC.getUserByUserName(username);
                 session.setAttribute("role", user.getRole().getName());
-                session.setAttribute("role", user.getRole().getName());
                 session.setAttribute("username", username);
 
                 // Lấy giỏ hàng và gán vào User

@@ -12,23 +12,21 @@
         </group>
 >>>>>>> 3fe63b37239b05c73ff57305f90f62e1ef5b549e -->
         <group>
-            <!-- <<<<<<< HEAD -->
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/resources/client/js/main.js</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/layout/header.jsp</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/HomePage.java</file>
-            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Cart.java</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/homepage.jsp</file>
-            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Java_JDBC.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Cart.java</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/User.java</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/CartDetail.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/AdminServlet.java</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/ClientServlet.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/register.jsp</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Product.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/UserServlet.java</file>
+            <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/model/Java_JDBC.java</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/web/WEB-INF/view/client/cartDetail.jsp</file>
             <file>file:/D:/LearnCode/Java/PRJ301/Phone.Store/src/java/controller/AuthServlet.java</file>
-            <!-- =======
-            <file>file:/D:/PRJ301-PhoneStore/src/java/model/User.java</file>
-            <file>file:/D:/PRJ301-PhoneStore/src/java/controller/UserServlet.java</file>
-            <file>file:/D:/PRJ301-PhoneStore/src/java/model/Java_JDBC.java</file>
->>>>>>> 6f82fc4f501cbda48c82d6b6275fcd6a5f417a66 -->
         </group>
     </open-files>
 </project-private>

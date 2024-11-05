@@ -95,21 +95,22 @@ public class Java_JDBC {
     public static User getUserByUserName(String username) throws Exception {
         User user = null;
 
-        String query = "SELECT username, email, password_hash, full_name, role_id, created_at, phonenumber, address FROM Users WHERE username = ?";
+        String query = "SELECT user_id, username, email, password_hash, full_name, role_id, created_at, phone_number, address FROM Users WHERE username = ?";
 
         try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement stmt = con.prepareStatement(query)) {
             stmt.setString(1, username);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt("user_id");
                 String email = rs.getString("email");
                 String passwordHash = rs.getString("password_hash");
                 String fullName = rs.getString("full_name");
-                String phoneNumber = rs.getString("phonenumber");
+                String phoneNumber = rs.getString("phone_number");
                 Role role = getRoleById(rs.getInt("role_id"));
                 String address = rs.getString("address");
 
-                user = new User(username, email, passwordHash, fullName, phoneNumber, address);
+                user = new User(userId, username, email, passwordHash, fullName, phoneNumber, address);
                 user.setRole(role);
             }
         } catch (SQLException e) {
@@ -136,7 +137,7 @@ public class Java_JDBC {
     }
 
     public static void insertUser(User user) {
-        String insertQuery = "INSERT INTO Users (username, email, password_hash, full_name, role_id, phonenumber, created_at, address) VALUES (?, ?, ?, ?, 1, ?, ?, ?)";
+        String insertQuery = "INSERT INTO Users (username, email, password_hash, full_name, role_id, phone_number, created_at, address) VALUES (?, ?, ?, ?, 1, ?, ?, ?)";
 
         try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement stmt = con.prepareStatement(insertQuery)) {
             stmt.setString(1, user.getUsername());

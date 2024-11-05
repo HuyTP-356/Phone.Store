@@ -22,8 +22,21 @@ public class User {
     private String address;
 
     // Constructor
-    public User(String username, String email, String passwordHash, String fullName, String phoneNumber,
+    public User(int userId, String username, String email, String passwordHash, String fullName, String phoneNumber,
             String address) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.createdAt = Date.from(Instant.now());
+        this.orders = new ArrayList<>();
+        this.createdAt = Date.from(Instant.now()); // Đặt thời gian tạo mặc định
+        this.address = address;
+    }
+
+    public User(String username, String email, String passwordHash, String fullName, String phoneNumber, String address) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;

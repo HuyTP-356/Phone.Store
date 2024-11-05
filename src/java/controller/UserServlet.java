@@ -58,31 +58,29 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8"); // Đảm bảo mã hóa UTF-8 cho các ký tự tiếng Việt
+        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
         String action = request.getParameter("action");
 
         if ("addUser".equals(action)) {
             String username = request.getParameter("username");
             String email = request.getParameter("email");
-            String password = request.getParameter("passwordHash"); // Assuming it's plain text
+            String password = request.getParameter("password");
             String fullName = request.getParameter("fullName");
             String phoneNumber = request.getParameter("phoneNumber");
             String address = request.getParameter("address");
 
             System.out.println("Registering user with username: " + username);
 
-            // Tạo một đối tượng User từ các thông tin nhận được từ form
             User newUser = new User(username, email, password, fullName, phoneNumber, address);
             newUser.setUsername(username);
             newUser.setEmail(email);
-            newUser.setPasswordHash(password); // Lưu ý: Xử lý mật khẩu trước khi lưu vào DB nếu cần thiết
+            newUser.setPasswordHash(password);
             newUser.setFullName(fullName);
             newUser.setPhoneNumber(phoneNumber);
             newUser.setAddress(address);
 
             try {
-                // Chèn người dùng mới vào cơ sở dữ liệu
                 Java_JDBC.insertUser(newUser);
                 response.sendRedirect("AuthServlet?action=login"); // Chuyển hướng về trang đăng nhập sau khi đăng ký thành công
             } catch (Exception ex) {
