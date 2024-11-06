@@ -62,7 +62,7 @@
 
                                         <li><a class="dropdown-item" href="#">Quản lý tài khoản</a></li>
 
-                                        <li><a class="dropdown-item" href="#">Lịch sử mua hàng</a></li>
+                                        <li><a class="dropdown-item" href="${pageContext.request.contextPath}/client?action=showOrderHistory">Lịch sử mua hàng</a></li>
                                         <c:if test="${sessionScope.role == 'Admin'}">
                                             <li><a class="dropdown-item" href="AuthServlet?action=login">Quản lý trang
                                                     web</a></li>

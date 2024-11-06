@@ -38,6 +38,14 @@ public class Product {
         this.imageUrl = imageUrl;
         this.stockQuantity = stockQuantity;
     }
+    
+    public Product(int id, String name, String brand, double price, String imageUrl) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.imageUrl = imageUrl;
+    }
 
     public Product() {
     }

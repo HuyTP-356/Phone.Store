@@ -2,6 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<%
+    HttpSession session1 = request.getSession(false);
+    if (session1 == null || session1.getAttribute("username") == null) {
+        response.sendRedirect("AuthServlet?action=login");
+        return;
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 

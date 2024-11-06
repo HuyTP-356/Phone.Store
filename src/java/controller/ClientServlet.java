@@ -28,6 +28,7 @@ import model.Cart;
 import model.CartDetail;
 import model.Java_JDBC;
 import model.Order;
+import model.OrderItem;
 import model.Product;
 import model.User;
 
@@ -164,7 +165,9 @@ public class ClientServlet extends HttpServlet {
                 case "showProductInfor":
                     showProductInformation(request, response);
                     break;
-
+                case "showOrderHistory":
+                    showOrderHistory(request, response);
+                    break;
                 case "allProductsPage":
                     showProductPage(request, response);
                     break;
@@ -211,6 +214,21 @@ public class ClientServlet extends HttpServlet {
                     break;
             }
         }
+    }
+
+    private void showOrderHistory(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        List<Order> orderedList = Java_JDBC.getOrder(currentUser);
+        
+        request.setAttribute("orders", orderedList);
+        
+        request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/order-history.jsp").forward(request, response);
+
+//        Gson gson = new Gson();
+//        response.setContentType("application/json");
+//        PrintWriter out = response.getWriter();
     }
 
     private void handleAddToCart(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -569,7 +587,6 @@ public class ClientServlet extends HttpServlet {
 
     private void handleShowCheckOut(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
-//        User currentUser = (User) session.getAttribute("user");
         Cart cart = (Cart) session.getAttribute("cart");
         session.setAttribute("cart", cart);
         double totalPrice = 0.0;
@@ -599,15 +616,15 @@ public class ClientServlet extends HttpServlet {
             ResponseMessage msg = new ResponseMessage(
                     true,
                     "Đặt hàng thành công! Vào lịch sử mua hàng để kiểm tra.",
-                    totalPrice, // Tổng giá của giỏ hàng
-                    0 // Số lượng mặt hàng trong giỏ hàng
+                    totalPrice,
+                    0
             );
             msg.setRedirectUrl(request.getContextPath() + "/client?action=showCart");
             out.print(gson.toJson(msg));
-            out.flush();         
+            out.flush();
         } else {
             request.setAttribute("errorMessage", "Failed to create order. Please try again.");
-            request.getRequestDispatcher(request.getContextPath() + ResourcesHandler.ClientPath() + "/showCheckOut.jsp").forward(request, response); // Redirect back to checkout
+            request.getRequestDispatcher(request.getContextPath() + ResourcesHandler.ClientPath() + "/showCheckOut.jsp").forward(request, response);
         }
     }
 

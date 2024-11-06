@@ -14,7 +14,8 @@ public class Order {
     private String shippingAddress;
     private String receiver;
     private String receiverPhoneNumber;
-    private List<OrderItem> orderItems; // Mỗi đơn hàng có nhiều sản phẩm, và OrderItem ghi lại chi tiết cho từng sản phẩm trong đơn hàng
+    private List<OrderItem> orderItems;
+    // Mỗi đơn hàng có nhiều sản phẩm, và OrderItem ghi lại chi tiết cho từng sản phẩm trong đơn hàng
     
     public Order(int orderId, User user, Date orderDate, double totalAmount, String status, String shippingAddress, String receiver, String receiverPhoneNumber) {
         this.orderId = orderId;

@@ -634,6 +634,7 @@ public class Java_JDBC {
     public static Order createOrderForUser(User user, String shippingAddress, double totalAmount, String receiverName, String receiverPhoneNumber) {
         Order order = null;
         Connection con = getConnectionWithSqlJdbc();
+        Cart cart = getCartForUser(user);
 
         try {
             String sql = "INSERT INTO Orders (user_id, total_amount, shipping_address, receiver, receiverPhone, status) VALUES (?, ?, ?, ?, ?, ?)";
@@ -653,9 +654,25 @@ public class Java_JDBC {
                 if (generatedKeys.next()) {
                     int orderId = generatedKeys.getInt(1);
                     order = new Order(orderId, user, Date.from(Instant.now()), totalAmount, shippingAddress, "Pending", receiverName, receiverPhoneNumber);
+
+                    // Thêm mục trong Order_Items từ Cart
+                    String insertOrderItemSql = "INSERT INTO Order_Items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
+                    PreparedStatement orderItemStmt = con.prepareStatement(insertOrderItemSql);
+
+                    for (CartDetail cartDetail : cart.getCartDetails()) {
+                        Product product = cartDetail.getProduct(); // Lấy sản phẩm từ cart detail
+                        double price = product.getPrice(); // Lấy giá sản phẩm từ đối tượng Product
+
+                        // Chèn thông tin vào bảng Order_Items
+                        orderItemStmt.setInt(1, orderId); // order_id
+                        orderItemStmt.setInt(2, product.getId()); // product_id
+                        orderItemStmt.setInt(3, cartDetail.getQuantity()); // quantity
+                        orderItemStmt.setDouble(4, price); // price
+                        orderItemStmt.executeUpdate();
+                    }
                     String deleteCartItemsSql = "DELETE FROM CartItem WHERE cart_id = ?";
                     PreparedStatement deleteStmt = con.prepareStatement(deleteCartItemsSql);
-                    deleteStmt.setInt(1, user.getCart().getCartId());  // Giả sử `User` có thuộc tính `cartId` để lấy ra `cart_id`
+                    deleteStmt.setInt(1, user.getCart().getCartId());
                     deleteStmt.executeUpdate();
                 }
 
@@ -672,6 +689,81 @@ public class Java_JDBC {
             }
         }
         return order;
+    }
+
+    // Java_JDBC
+    public static List<Order> getOrder(User user) {
+//        Order order;
+//        order.getTotalAmount()getOrderItems()
+        List<Order> orderedList = new ArrayList<>();
+        Connection con = getConnectionWithSqlJdbc();
+        String getOrders = """
+                           SELECT * FROM Orders;
+                           """;
+        String getAllOrderDetails = """
+                 SELECT o.order_id, o.order_date, o.total_amount, o.shipping_address, o.receiver, o.receiverPhone, o.status, 
+                 oi.order_item_id, oi.product_id, oi.quantity, oi.price, p.product_name, p.brand, p.price, p.image_url
+                 FROM Orders o 
+                 JOIN Order_Items oi ON o.order_id = oi.order_id 
+                 JOIN Products p ON oi.product_id = p.product_id 
+                WHERE o.user_id = ? AND o.order_id = ?
+                     """;
+
+        try (PreparedStatement pstmt = con.prepareStatement(getOrders)) {
+//            pstmt.setInt(1, user.getUserId());
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                // Lấy thông tin đơn hàng
+                int orderId = rs.getInt("order_id");
+                double totalAmount = rs.getDouble("total_amount");
+                String shippingAddress = rs.getString("shipping_address");
+                java.util.Date orderedDate = rs.getDate("order_date");
+                String receiver = rs.getString("receiver");
+                String receiverPhone = rs.getString("receiverPhone");
+                String status = rs.getString("status");
+
+                Order order = new Order(orderId, user, orderedDate, totalAmount, status, receiver, receiverPhone, shippingAddress);
+                orderedList.add(order);
+
+                try (PreparedStatement pstmtDetails = con.prepareStatement(getAllOrderDetails)) {
+                    pstmtDetails.setInt(1, user.getUserId());
+                    pstmtDetails.setInt(2, orderId);
+                    ResultSet rsDetails = pstmtDetails.executeQuery();
+
+                    while (rsDetails.next()) {
+                        int orderItemId = rsDetails.getInt("order_item_id");
+                        int productId = rsDetails.getInt("product_id");
+                        int quantity = rsDetails.getInt("quantity");
+                        double price = rsDetails.getDouble("price");
+                        String productName = rsDetails.getString("product_name");
+                        String productBrand = rsDetails.getString("brand");
+                        String productImageURL = rsDetails.getString("image_url");
+
+                        Product product = new Product(productId, productName, productBrand, price, productImageURL);
+
+                        // Tạo đối tượng OrderItem và thêm vào danh sách
+                        OrderItem orderItem = new OrderItem(orderItemId, order, product, quantity, price);
+                        order.getOrderItems().add(orderItem);
+                    }
+                } catch (SQLException e) {
+                    System.out.println("Error while fetching order details: " + e.getMessage());
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error while fetching order history: " + e.getMessage());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error closing connection: " + ex.getMessage());
+            }
+        }
+
+        return orderedList;
     }
 
 }
