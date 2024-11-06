@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,10 +27,11 @@ import java.util.stream.IntStream;
 import model.Cart;
 import model.CartDetail;
 import model.Java_JDBC;
+import model.Order;
 import model.Product;
 import model.User;
 
-@WebServlet(name = "ClientServlet", urlPatterns = { "/client" })
+@WebServlet(name = "ClientServlet", urlPatterns = {"/client"})
 public class ClientServlet extends HttpServlet {
 
     private class ResponseMessage {
@@ -42,6 +42,7 @@ public class ClientServlet extends HttpServlet {
         private int cartItemCount;
         private int newQuantity;
         private double newTotalPrice;
+        private String redirectUrl;
 
         public ResponseMessage(boolean success, String message) {
             this.success = success;
@@ -114,6 +115,14 @@ public class ClientServlet extends HttpServlet {
             this.newTotalPrice = newTotalPrice;
         }
 
+        public String getRedirectUrl() {
+            return redirectUrl;
+        }
+
+        public void setRedirectUrl(String redirectUrl) {
+            this.redirectUrl = redirectUrl;
+        }
+
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -138,10 +147,10 @@ public class ClientServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -155,6 +164,7 @@ public class ClientServlet extends HttpServlet {
                 case "showProductInfor":
                     showProductInformation(request, response);
                     break;
+
                 case "allProductsPage":
                     showProductPage(request, response);
                     break;
@@ -171,10 +181,10 @@ public class ClientServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -190,6 +200,12 @@ public class ClientServlet extends HttpServlet {
                     break;
                 case "removeFromCart":
                     handleRemoveFromCart(request, response);
+                    break;
+                case "showCheckOut":
+                    handleShowCheckOut(request, response);
+                    break;
+                case "handleCheckOut":
+                    submitFormCheckOut(request, response);
                     break;
                 default:
                     break;
@@ -549,6 +565,50 @@ public class ClientServlet extends HttpServlet {
         }
         request.setAttribute("categoryCount", categoryCount);
         request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/productDetail.jsp").forward(request, response);
+    }
+
+    private void handleShowCheckOut(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession();
+//        User currentUser = (User) session.getAttribute("user");
+        Cart cart = (Cart) session.getAttribute("cart");
+        session.setAttribute("cart", cart);
+        double totalPrice = 0.0;
+        for (CartDetail cartDetail : cart.getCartDetails()) {
+            totalPrice += cartDetail.getProduct().getPrice() * cartDetail.getQuantity();
+        }
+        session.setAttribute("totalPrice", totalPrice);
+        request.getRequestDispatcher(ResourcesHandler.ClientPath() + "/checkout.jsp").forward(request, response);
+    }
+
+    private void submitFormCheckOut(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession();
+        Gson gson = new Gson();
+        response.setContentType("application/json");
+        PrintWriter out = response.getWriter();
+        User currentUser = (User) session.getAttribute("user");
+        String receiverName = request.getParameter("receiverName");
+        String receiverAddress = request.getParameter("receiverAddress");
+        String receiverPhone = request.getParameter("receiverPhone");
+        double totalPrice = (double) session.getAttribute("totalPrice");
+
+        // Create order
+        Order order = Java_JDBC.createOrderForUser(currentUser, receiverAddress, totalPrice, receiverName, receiverPhone);
+        if (order != null) {
+            session.setAttribute("order", order);
+            session.removeAttribute("cart");
+            ResponseMessage msg = new ResponseMessage(
+                    true,
+                    "Đặt hàng thành công! Vào lịch sử mua hàng để kiểm tra.",
+                    totalPrice, // Tổng giá của giỏ hàng
+                    0 // Số lượng mặt hàng trong giỏ hàng
+            );
+            msg.setRedirectUrl(request.getContextPath() + "/client?action=showCart");
+            out.print(gson.toJson(msg));
+            out.flush();         
+        } else {
+            request.setAttribute("errorMessage", "Failed to create order. Please try again.");
+            request.getRequestDispatcher(request.getContextPath() + ResourcesHandler.ClientPath() + "/showCheckOut.jsp").forward(request, response); // Redirect back to checkout
+        }
     }
 
     /**

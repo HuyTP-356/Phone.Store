@@ -12,9 +12,11 @@ public class Order {
     private double totalAmount;
     private String status;
     private String shippingAddress;
+    private String receiver;
+    private String receiverPhoneNumber;
     private List<OrderItem> orderItems; // Mỗi đơn hàng có nhiều sản phẩm, và OrderItem ghi lại chi tiết cho từng sản phẩm trong đơn hàng
     
-    public Order(int orderId, User user, Date orderDate, double totalAmount, String status, String shippingAddress) {
+    public Order(int orderId, User user, Date orderDate, double totalAmount, String status, String shippingAddress, String receiver, String receiverPhoneNumber) {
         this.orderId = orderId;
         this.user = user;
         this.orderDate = orderDate;
@@ -22,6 +24,8 @@ public class Order {
         this.status = status;
         this.shippingAddress = shippingAddress;
         this.orderItems = new ArrayList<>();
+        this.receiver = receiver;
+        this.receiverPhoneNumber = receiverPhoneNumber;
     }
     
     public List<OrderItem> getOrderItems() {

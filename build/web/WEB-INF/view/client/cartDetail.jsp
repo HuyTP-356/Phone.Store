@@ -179,7 +179,7 @@
                                         <fmt:formatNumber type="number" value="${totalPrice}" /> đ
                                     </p>
                                 </div>
-                                <form action="${pageContext.request.contextPath}/client?action=confirmCheckout" method="post">
+                                <form action="${pageContext.request.contextPath}/client?action=showCheckOut" method="post">
                                     <div style="display: none;">
                                         <c:forEach var="cartDetail" items="${cart.cartDetails}"
                                                    varStatus="status">

@@ -26,7 +26,7 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css"
               rel="stylesheet">
-        
+
 
         <!-- Libraries Stylesheet -->
         <link href="${pageContext.request.contextPath}/resources/client/lib/lightbox/css/lightbox.min.css" rel="stylesheet">
@@ -78,101 +78,101 @@
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox"
                                                value="Apple" <c:if test="${selectedBrands.contains('Apple')}">checked</c:if>>
-                                        <label class="form-check-label">Apple</label>
+                                               <label class="form-check-label">Apple</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   value="OPPO" <c:if test="${selectedBrands.contains('OPPO')}">checked</c:if>>
+                                            <label class="form-check-label">OPPO</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   value="Realme" <c:if test="${selectedBrands.contains('Realme')}">checked</c:if>>
+                                            <label class="form-check-label">Realme</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   value="Samsung" <c:if test="${selectedBrands.contains('Samsung')}">checked</c:if>>
+                                            <label class="form-check-label">Samsung</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   value="Tecno" <c:if test="${selectedBrands.contains('Tecno')}">checked</c:if>>
+                                            <label class="form-check-label">Tecno</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   value="Vivo" <c:if test="${selectedBrands.contains('Vivo')}">checked</c:if>>
+                                            <label class="form-check-label">Vivo</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox"
+                                                   value="Xiaomi" <c:if test="${selectedBrands.contains('Xiaomi')}">checked</c:if>>
+                                            <label class="form-check-label">Xiaomi</label>
+                                        </div>
                                     </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="OPPO" <c:if test="${selectedBrands.contains('OPPO')}">checked</c:if>>
-                                        <label class="form-check-label">OPPO</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="Realme" <c:if test="${selectedBrands.contains('Realme')}">checked</c:if>>
-                                        <label class="form-check-label">Realme</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="Samsung" <c:if test="${selectedBrands.contains('Samsung')}">checked</c:if>>
-                                        <label class="form-check-label">Samsung</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="Tecno" <c:if test="${selectedBrands.contains('Tecno')}">checked</c:if>>
-                                        <label class="form-check-label">Tecno</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="Vivo" <c:if test="${selectedBrands.contains('Vivo')}">checked</c:if>>
-                                        <label class="form-check-label">Vivo</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox"
-                                               value="Xiaomi" <c:if test="${selectedBrands.contains('Xiaomi')}">checked</c:if>>
-                                        <label class="form-check-label">Xiaomi</label>
-                                    </div>
-                                </div>
-                                <div class="col-12" id="priceFilter">
-                                    <div class="mb-2"><b>Mức giá</b></div>
+                                    <div class="col-12" id="priceFilter">
+                                        <div class="mb-2"><b>Mức giá</b></div>
 
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="price-2"
-                                               value="duoi-10-trieu" <c:if test="${selectedPrices.contains('duoi-10-trieu')}">checked</c:if>>
-                                        <label class="form-check-label" for="price-2">Dưới 10 triệu</label>
-                                    </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="price-2"
+                                                   value="duoi-10-trieu" <c:if test="${selectedPrices.contains('duoi-10-trieu')}">checked</c:if>>
+                                            <label class="form-check-label" for="price-2">Dưới 10 triệu</label>
+                                        </div>
 
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="price-3"
-                                               value="10-15-trieu" <c:if test="${selectedPrices.contains('10-15-trieu')}">checked</c:if>>
-                                        <label class="form-check-label" for="price-3">Từ 10 - 15
-                                            triệu</label>
-                                    </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="price-3"
+                                                   value="10-15-trieu" <c:if test="${selectedPrices.contains('10-15-trieu')}">checked</c:if>>
+                                            <label class="form-check-label" for="price-3">Từ 10 - 15
+                                                triệu</label>
+                                        </div>
 
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="price-4"
-                                               value="15-20-trieu" <c:if test="${selectedPrices.contains('15-20-trieu')}">checked</c:if>>
-                                        <label class="form-check-label" for="price-4">Từ 15 - 20
-                                            triệu</label>
-                                    </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="price-4"
+                                                   value="15-20-trieu" <c:if test="${selectedPrices.contains('15-20-trieu')}">checked</c:if>>
+                                            <label class="form-check-label" for="price-4">Từ 15 - 20
+                                                triệu</label>
+                                        </div>
 
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" id="price-5"
-                                               value="tren-20-trieu" <c:if test="${selectedPrices.contains('tren-20-trieu')}">checked</c:if>>
-                                        <label class="form-check-label" for="price-5">Trên 20 triệu</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="checkbox" id="price-5"
+                                                   value="tren-20-trieu" <c:if test="${selectedPrices.contains('tren-20-trieu')}">checked</c:if>>
+                                            <label class="form-check-label" for="price-5">Trên 20 triệu</label>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="mb-2"><b>Sắp xếp</b></div>
+                                    <div class="col-12">
+                                        <div class="mb-2"><b>Sắp xếp</b></div>
 
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" id="sort-1"
-                                               value="gia-tang-dan" name="radio-sort" <c:if test="${selectedSort.contains('gia-tang-dan')}">checked</c:if>>
-                                        <label class="form-check-label" for="sort-1">Giá tăng dần</label>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="sort-1"
+                                                   value="gia-tang-dan" name="radio-sort" <c:if test="${selectedSort.contains('gia-tang-dan')}">checked</c:if>>
+                                            <label class="form-check-label" for="sort-1">Giá tăng dần</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="sort-2"
+                                                   value="gia-giam-dan" name="radio-sort" <c:if test="${selectedSort.contains('gia-giam-dan')}">checked</c:if>>
+                                            <label class="form-check-label" for="sort-2">Giá giảm dần</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" id="sort-3"
+                                                   value="gia-nothing" name="radio-sort" <c:if test="${selectedSort.contains('gia-nothing')}">checked</c:if>>
+                                            <label class="form-check-label" for="sort-3">Không sắp xếp</label>
+                                        </div>
+
                                     </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" id="sort-2"
-                                               value="gia-giam-dan" name="radio-sort" <c:if test="${selectedSort.contains('gia-giam-dan')}">checked</c:if>>
-                                        <label class="form-check-label" for="sort-2">Giá giảm dần</label>
+                                    <div class="col-12">
+                                        <button
+                                            class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4"
+                                            id="btnFilter" onclick="filterProduct()">
+                                            Lọc Sản Phẩm
+                                        </button>
                                     </div>
-
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" id="sort-3"
-                                               value="gia-nothing" name="radio-sort" <c:if test="${selectedSort.contains('gia-nothing')}">checked</c:if>>
-                                        <label class="form-check-label" for="sort-3">Không sắp xếp</label>
-                                    </div>
-
-                                </div>
-                                <div class="col-12">
-                                    <button
-                                        class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4"
-                                        id="btnFilter" onclick="filterProduct()">
-                                        Lọc Sản Phẩm
-                                    </button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-12 col-md-8 text-center">
-                            <div class="row g-4">
+                            <div class="col-12 col-md-8 text-center">
+                                <div class="row g-4">
                                 <c:if test="${totalPages ==  0}">
                                     <div>Không tìm thấy sản phẩm</div>
                                 </c:if>
@@ -204,15 +204,14 @@
                                                                           value="${product.price}" />
                                                         đ
                                                     </p>
-                                                    <form action="/add-product-to-cart/${product.id}"
-                                                          method="post">
-
-                                                        <button
-                                                            class="mx-auto btn border border-secondary rounded-pill px-3 text-primary"><i
-                                                                class="fa fa-shopping-bag me-2 text-primary"></i>
-                                                            Add to cart
-                                                        </button>
-                                                    </form>
+                                                    <button
+                                                        class="mx-auto btn border border-secondary rounded-pill px-3 text-primary add-to-cart-btn"
+                                                        data-id="${product.id}"
+                                                        data-context="${pageContext.request.contextPath}">
+                                                        <i
+                                                            class="fa fa-shopping-bag me-2 text-primary"></i>
+                                                        Add to cart
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -247,7 +246,7 @@
 
         <!-- Template Javascript -->
         <script src="${pageContext.request.contextPath}/resources/client/js/main.js"></script>
-        
+
 
     </body>
 

@@ -16,12 +16,12 @@ public class Java_JDBC {
         String dbPassword = "123";
         String port = "1433";
         String IP = "127.0.0.1";
-         String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
-         String DBName = "PhoneStore";
-         String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-        
-         String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName
-         + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
+        String ServerName = "DESKTOP-B26N793\\HOANGCHAU";
+        String DBName = "PhoneStore";
+        String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+
+        String dbURL = "jdbc:sqlserver://" + ServerName + ";databaseName=" + DBName
+                + ";encrypt=false;trustServerCertificate=false;loginTimeout=30";
 //        String ServerName = "DESKTOP-UKLNCAK";
 //        String DBName = "PhoneStore";
 //        String driverClass = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
@@ -47,9 +47,7 @@ public class Java_JDBC {
         List<Product> productList = new ArrayList<>();
         String query = "SELECT * FROM Products";
 
-        try (Connection connection = getConnectionWithSqlJdbc();
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query)) {
+        try (Connection connection = getConnectionWithSqlJdbc(); Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(query)) {
 
             while (resultSet.next()) {
                 Product product = new Product();
@@ -207,8 +205,7 @@ public class Java_JDBC {
         }
         sql.append(" WHERE username = ?");
 
-        try (Connection conn = getConnectionWithSqlJdbc();
-                PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
             int paramIndex = 1;
 
             if (email != null) {
@@ -355,9 +352,7 @@ public class Java_JDBC {
         String sql = "SELECT COUNT(*) FROM Products";
         int count = 0;
 
-        try (Connection conn = getConnectionWithSqlJdbc();
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 count = rs.getInt(1);
             }
@@ -372,9 +367,7 @@ public class Java_JDBC {
         List<Product> products = new ArrayList<>();
         String sql = "SELECT TOP 16 * FROM Products ORDER BY product_id";
 
-        try (Connection conn = getConnectionWithSqlJdbc();
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                ResultSet rs = pstmt.executeQuery()) {
+        try (Connection conn = getConnectionWithSqlJdbc(); PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
                 Product product = new Product();
@@ -398,9 +391,7 @@ public class Java_JDBC {
         List<String> brands = new ArrayList<>();
         String sql = "SELECT DISTINCT brand FROM Products";
 
-        try (Connection con = getConnectionWithSqlJdbc();
-                PreparedStatement ps = con.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try (Connection con = getConnectionWithSqlJdbc(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 brands.add(rs.getString("brand"));
@@ -608,34 +599,79 @@ public class Java_JDBC {
                 }
                 break;
             case "increase":
-                String increaseItemQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE product_id = ?"; {
-                try {
-                    ps = conn.prepareStatement(increaseItemQuery);
-                    ps.setInt(1, productId);
-                    ps.executeUpdate();
-                } catch (SQLException ex) {
-                    Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
+                String increaseItemQuery = "UPDATE CartItem SET quantity = quantity + 1 WHERE product_id = ?";
+                 {
+                    try {
+                        ps = conn.prepareStatement(increaseItemQuery);
+                        ps.setInt(1, productId);
+                        ps.executeUpdate();
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            }
                 break;
 
             case "decrease":
-                String decreaseItemQuery = "UPDATE CartItem SET quantity = quantity - 1 WHERE product_id = ?"; {
-                try {
-                    ps = conn.prepareStatement(decreaseItemQuery);
-                    ps.setInt(1, productId);
-                    ps.executeUpdate();
+                String decreaseItemQuery = "UPDATE CartItem SET quantity = quantity - 1 WHERE product_id = ?";
+                 {
+                    try {
+                        ps = conn.prepareStatement(decreaseItemQuery);
+                        ps.setInt(1, productId);
+                        ps.executeUpdate();
 
-                } catch (SQLException ex) {
-                    Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(Java_JDBC.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            }
                 break;
             default:
                 break;
         }
 
         return cart;
+    }
+
+    public static Order createOrderForUser(User user, String shippingAddress, double totalAmount, String receiverName, String receiverPhoneNumber) {
+        Order order = null;
+        Connection con = getConnectionWithSqlJdbc();
+
+        try {
+            String sql = "INSERT INTO Orders (user_id, total_amount, shipping_address, receiver, receiverPhone, status) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            pstmt.setInt(1, user.getUserId());
+            pstmt.setDouble(2, totalAmount);
+            pstmt.setString(3, shippingAddress);
+            pstmt.setString(4, receiverName);
+            pstmt.setString(5, receiverPhoneNumber);
+            pstmt.setString(6, "Pending");
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int orderId = generatedKeys.getInt(1);
+                    order = new Order(orderId, user, Date.from(Instant.now()), totalAmount, shippingAddress, "Pending", receiverName, receiverPhoneNumber);
+                    String deleteCartItemsSql = "DELETE FROM CartItem WHERE cart_id = ?";
+                    PreparedStatement deleteStmt = con.prepareStatement(deleteCartItemsSql);
+                    deleteStmt.setInt(1, user.getCart().getCartId());  // Giả sử `User` có thuộc tính `cartId` để lấy ra `cart_id`
+                    deleteStmt.executeUpdate();
+                }
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            try {
+                if (con != null) {
+                    con.close();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error closing connection: " + ex.getMessage());
+            }
+        }
+        return order;
     }
 
 }
